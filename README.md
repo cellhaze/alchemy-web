@@ -40,9 +40,17 @@ stroke starts to where it ends.
 
 Several affects can be on at once, e.g. Mirror and Gradient together.
 
+**Flip H** and **Flip V** mirror the whole drawing left-to-right or top-to-bottom, like
+Edit > Flip in the desktop client. As in the original, the background image isn't flipped.
+
+**Image…** loads a background image to draw over, centred under the drawing, like View >
+Load Background Image. Images larger than the window are scaled down to fit (the desktop
+client showed them at full size). **Remove image** takes it away again.
+
 **Export** saves what's on the canvas: **PNG** (with the background, at full screen
 resolution), **PNG, transparent** (no background), or **SVG** (a vector file for Inkscape,
-Illustrator or a browser). Files are named like `alchemy-2026-11-20-143205.png`. The
+Illustrator or a browser). The background image is included in the normal PNG and
+embedded in the SVG; the transparent PNG is the drawing only. Files are named like `alchemy-2026-11-20-143205.png`. The
 original Alchemy could also export PDF; that would need a library, so it isn't included.
 
 ## To do

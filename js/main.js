@@ -173,6 +173,46 @@
     showExport(false);
   });
 
+  // Flip the drawing
+  document.getElementById('flip-h').addEventListener('click', function () {
+    canvas.flipHorizontal();
+  });
+  document.getElementById('flip-v').addEventListener('click', function () {
+    canvas.flipVertical();
+  });
+
+  // Background image: read the file as a data: URL so it works from file://
+  // and can be embedded in SVG exports.
+  var bgButton = document.getElementById('bg-image');
+  var bgRemove = document.getElementById('bg-image-remove');
+  var bgFile = document.getElementById('bg-image-file');
+  bgButton.addEventListener('click', function () {
+    bgFile.value = '';
+    bgFile.click();
+  });
+  bgFile.addEventListener('change', function () {
+    var file = bgFile.files && bgFile.files[0];
+    if (!file) return;
+    var reader = new FileReader();
+    reader.onload = function () {
+      canvas.setBackgroundImage(reader.result, function (ok) {
+        if (ok) {
+          bgRemove.hidden = false;
+        } else {
+          alert('That file couldn’t be loaded as an image. Please choose a JPG, PNG, GIF or WebP file.');
+        }
+      });
+    };
+    reader.onerror = function () {
+      alert('That file couldn’t be read.');
+    };
+    reader.readAsDataURL(file);
+  });
+  bgRemove.addEventListener('click', function () {
+    canvas.clearBackgroundImage();
+    bgRemove.hidden = true;
+  });
+
   // Gradient affect
   var gradientButton = document.getElementById('gradient');
   gradientButton.addEventListener('click', function () {

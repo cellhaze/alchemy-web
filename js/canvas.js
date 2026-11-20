@@ -38,6 +38,12 @@
     this.lineWidth = 1;
     this.bgColor = '#ffffff';
 
+    // Background image (View > Load Background Image in the desktop client):
+    // drawn centred under the shapes. `bgImageSrc` is a data: URL, kept so the
+    // SVG export can embed the picture.
+    this.bgImage = null;
+    this.bgImageSrc = null;
+
     // Pen state, filled in from pointer events
     this.penDown = false;
     this.penType = 'mouse';   // 'mouse' | 'pen' | 'touch'
@@ -141,6 +147,73 @@
   };
 
   // ---------------------------------------------------------------------------
+  // Flip (Edit > Flip Horizontal / Flip Vertical in the desktop client)
+
+  /**
+   * Mirror every finished shape across the centre of the canvas, gradients
+   * included. Like AlcCanvas.flipHorizontal/flipVertical, shapes still being
+   * drawn and the background image are left alone.
+   */
+  Canvas.prototype._flip = function (map) {
+    for (var i = 0; i < this.shapes.length; i++) {
+      this.shapes[i] = this.shapes[i].transformed(map);
+    }
+    this.redraw(true);
+  };
+
+  Canvas.prototype.flipHorizontal = function () {
+    var w = this.width;
+    this._flip(function (p) { return { x: w - p.x, y: p.y }; });
+  };
+
+  Canvas.prototype.flipVertical = function () {
+    var h = this.height;
+    this._flip(function (p) { return { x: p.x, y: h - p.y }; });
+  };
+
+  // ---------------------------------------------------------------------------
+  // Background image
+
+  /**
+   * Set the background image from a data: URL. Calls done(true) once it has
+   * loaded, or done(false) if the file isn't an image the browser can read.
+   */
+  Canvas.prototype.setBackgroundImage = function (src, done) {
+    var self = this;
+    var img = new Image();
+    img.onload = function () {
+      self.bgImage = img;
+      self.bgImageSrc = src;
+      self.redraw();
+      if (done) done(true);
+    };
+    img.onerror = function () {
+      if (done) done(false);
+    };
+    img.src = src;
+  };
+
+  Canvas.prototype.clearBackgroundImage = function () {
+    this.bgImage = null;
+    this.bgImageSrc = null;
+    this.redraw();
+  };
+
+  /**
+   * Where the background image goes, in CSS pixels: centred at its natural
+   * size like the desktop client, but scaled down to fit if it is bigger than
+   * the window (so a large photo isn't cropped to its middle).
+   */
+  Canvas.prototype.getBackgroundImageRect = function () {
+    var img = this.bgImage;
+    if (!img || !img.naturalWidth || !img.naturalHeight) return null;
+    var scale = Math.min(1, this.width / img.naturalWidth, this.height / img.naturalHeight);
+    var w = img.naturalWidth * scale;
+    var h = img.naturalHeight * scale;
+    return { x: (this.width - w) / 2, y: (this.height - h) / 2, width: w, height: h };
+  };
+
+  // ---------------------------------------------------------------------------
   // Rendering
 
   Canvas.prototype.resize = function () {
@@ -173,11 +246,19 @@
     });
   };
 
+  /** Draw the background image (if any) onto a context scaled to CSS pixels. */
+  Canvas.prototype.drawBackgroundImage = function (ctx) {
+    var r = this.getBackgroundImageRect();
+    if (r) ctx.drawImage(this.bgImage, r.x, r.y, r.width, r.height);
+  };
+
   Canvas.prototype._paint = function () {
     var ctx = this.ctx;
     ctx.setTransform(1, 0, 0, 1, 0, 0);
     ctx.fillStyle = this.bgColor;
     ctx.fillRect(0, 0, this.el.width, this.el.height);
+    var self = this;
+    if (this.bgImage) this._withScale(ctx, function (c) { self.drawBackgroundImage(c); });
     ctx.drawImage(this.buffer, 0, 0);
 
     var lists = [this.createShapes, this.affectShapes, this.guideShapes];

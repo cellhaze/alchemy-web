@@ -49,6 +49,9 @@
       ctx.fillRect(0, 0, out.width, out.height);
     }
     ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    // The transparent export is the drawing only; the normal one includes the
+    // background image as it appears on screen.
+    if (!transparent) canvas.drawBackgroundImage(ctx);
     var shapes = visibleShapes(canvas);
     for (var i = 0; i < shapes.length; i++) shapes[i].draw(ctx);
     out.toBlob(function (blob) {
@@ -127,7 +130,17 @@
       '<!-- Made with Alchemy Web -->\n' +
       (defs.length ? '<defs>\n' + defs.join('\n') + '\n</defs>\n' : '') +
       '<rect width="100%" height="100%" fill="' + canvas.bgColor + '"/>\n' +
+      backgroundImage(canvas) +
       body.join('\n') + '\n</svg>\n';
+  }
+
+  /** The background image embedded as an <image>, at the same place as on screen. */
+  function backgroundImage(canvas) {
+    var r = canvas.getBackgroundImageRect && canvas.getBackgroundImageRect();
+    if (!r || !canvas.bgImageSrc) return '';
+    return '<image href="' + canvas.bgImageSrc + '" x="' + num(r.x) + '" y="' + num(r.y) +
+      '" width="' + num(r.width) + '" height="' + num(r.height) +
+      '" preserveAspectRatio="none"/>\n';
   }
 
   function exportSVG(canvas) {
