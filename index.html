@@ -17,6 +17,33 @@
     <div class="sub" role="group" aria-label="Create module">
       <button class="create-module" data-module="shapes" type="button" aria-pressed="true" title="Shapes: freehand lines and shapes">Shapes</button>
       <button class="create-module" data-module="splatter" type="button" aria-pressed="false" title="Splatter: paint splats and drips, fatter when you move slowly">Splatter</button>
+      <button class="create-module" data-module="speed" type="button" aria-pressed="false" title="Speed: fast movement flings the line out ahead of the pen">Speed</button>
+      <button class="create-module" data-module="scrawl" type="button" aria-pressed="false" title="Scrawl: a jittery, scribbly line">Scrawl</button>
+    </div>
+    <div id="speed-options" class="sub" hidden>
+      <button id="speed-linetype" type="button" title="Change the line type to curved or straight">Curved</button>
+      <label class="tool" title="How much cursor movement is sped up by">
+        <span>Speed</span>
+        <input id="speed-multiplier" type="range" min="0" max="35" step="1" value="15">
+        <output for="speed-multiplier">15</output>
+      </label>
+    </div>
+    <div id="scrawl-options" class="sub" hidden>
+      <label class="tool" title="Flow: draw a new scrawl every N pen moves (higher is longer, looser segments)">
+        <span>Flow</span>
+        <input id="scrawl-flow" type="range" min="1" max="25" step="1" value="10">
+        <output for="scrawl-flow">10</output>
+      </label>
+      <label class="tool" title="Detail: how many wobbly steps each segment is split into">
+        <span>Detail</span>
+        <input id="scrawl-detail" type="range" min="2" max="50" step="1" value="10">
+        <output for="scrawl-detail">10</output>
+      </label>
+      <label class="tool" title="Noise: how far each step can wander, in pixels">
+        <span>Noise</span>
+        <input id="scrawl-noise" type="range" min="1" max="50" step="1" value="10">
+        <output for="scrawl-noise">10</output>
+      </label>
     </div>
     <div id="splatter-options" class="sub" hidden>
       <label class="tool" title="The size of the splatter">
@@ -42,6 +69,12 @@
       <output id="weight-value">1</output>
     </label>
     <button id="clear" type="button" title="Clear the canvas (Backspace)">Clear</button>
+    <button id="export" type="button" aria-pressed="false" aria-controls="export-options" title="Export the canvas as an image">Export</button>
+    <div id="export-options" class="sub" hidden>
+      <button id="export-png" type="button" title="PNG image with the background, at full screen resolution">PNG</button>
+      <button id="export-png-clear" type="button" title="PNG image with a transparent background">PNG, transparent</button>
+      <button id="export-svg" type="button" title="SVG vector file, for Inkscape, Illustrator or a browser">SVG</button>
+    </div>
 
     <span class="separator" aria-hidden="true"></span>
 
@@ -57,8 +90,11 @@
 
   <script src="js/shape.js"></script>
   <script src="js/canvas.js"></script>
+  <script src="js/export.js"></script>
   <script src="js/modules/shapes.js"></script>
   <script src="js/modules/splatter.js"></script>
+  <script src="js/modules/speed.js"></script>
+  <script src="js/modules/scrawl.js"></script>
   <script src="js/modules/mirror.js"></script>
   <script src="js/modules/gradient.js"></script>
   <script src="js/main.js"></script>

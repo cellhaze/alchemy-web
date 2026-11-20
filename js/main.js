@@ -20,7 +20,11 @@
 
   // Create module switcher: one create module at a time, each may have options
   var createButtons = document.querySelectorAll('.create-module');
-  var createOptions = { splatter: document.getElementById('splatter-options') };
+  var createOptions = {
+    splatter: document.getElementById('splatter-options'),
+    speed: document.getElementById('speed-options'),
+    scrawl: document.getElementById('scrawl-options')
+  };
   function selectCreate(id) {
     canvas.setCreateModule(Alchemy.modules[id]);
     for (var i = 0; i < createButtons.length; i++) {
@@ -50,6 +54,30 @@
   splatterDrips.addEventListener('change', function () {
     Alchemy.modules.splatter.setDrips(clampInput(splatterDrips));
   });
+
+  /** Wire a range slider to a module setting, showing its value in the <output>. */
+  function slider(id, onChange) {
+    var input = document.getElementById(id);
+    var output = document.querySelector('output[for="' + id + '"]');
+    input.addEventListener('input', function () {
+      output.textContent = input.value;
+      onChange(Number(input.value));
+    });
+  }
+
+  // Speed options
+  var speedLineType = document.getElementById('speed-linetype');
+  speedLineType.addEventListener('click', function () {
+    var speed = Alchemy.modules.speed;
+    speed.freeform = !speed.freeform;
+    speedLineType.textContent = speed.freeform ? 'Curved' : 'Straight';
+  });
+  slider('speed-multiplier', function (v) { Alchemy.modules.speed.multiplier = v; });
+
+  // Scrawl options
+  slider('scrawl-flow', function (v) { Alchemy.modules.scrawl.flow = v; });
+  slider('scrawl-detail', function (v) { Alchemy.modules.scrawl.detail = v; });
+  slider('scrawl-noise', function (v) { Alchemy.modules.scrawl.noise = v; });
 
   // Style: line (stroke) or solid (fill)
   var styleButton = document.getElementById('style');
@@ -120,6 +148,29 @@
   mirror.onAxisSelectEnd = function () { pressed(mirrorAxis, false); };
   document.getElementById('mirror-reset').addEventListener('click', function () {
     mirror.resetAxis();
+  });
+
+  // Export: the button shows the format choices; picking one downloads a file
+  var exportButton = document.getElementById('export');
+  var exportOptions = document.getElementById('export-options');
+  function showExport(on) {
+    exportOptions.hidden = !on;
+    pressed(exportButton, on);
+  }
+  exportButton.addEventListener('click', function () {
+    showExport(exportOptions.hidden);
+  });
+  document.getElementById('export-png').addEventListener('click', function () {
+    Alchemy.exporter.exportPNG(canvas, false);
+    showExport(false);
+  });
+  document.getElementById('export-png-clear').addEventListener('click', function () {
+    Alchemy.exporter.exportPNG(canvas, true);
+    showExport(false);
+  });
+  document.getElementById('export-svg').addEventListener('click', function () {
+    Alchemy.exporter.exportSVG(canvas);
+    showExport(false);
   });
 
   // Gradient affect

@@ -112,6 +112,16 @@ html, body {
   width: 110px;
 }
 
+.sub input[type="range"] {
+  width: 80px;
+}
+
+.sub output {
+  min-width: 2ch;
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
 #weight-value {
   min-width: 2ch;
   text-align: right;

@@ -3,7 +3,8 @@
 A browser port of [Alchemy](https://github.com/karldd/Alchemy), the experimental open drawing project, using
 plain HTML, CSS, JavaScript and the Canvas 2D API.
 
-So far it has a full-screen canvas, two create modules (**Shapes** and **Splatter**), two
+So far it has a full-screen canvas, four create modules (**Shapes**, **Splatter**,
+**Speed** and **Scrawl**), two
 affect modules (**Mirror** and **Gradient**), and a toolbar with line/solid style, colour,
 line weight and clear.
 
@@ -26,10 +27,23 @@ reacts to speed, and **Drips** sets how many drips each segment throws. It's mad
 style; in Solid style the drips are too small to fill and the splats become thin slivers,
 as in the original.
 
+**Speed** (create) draws a normal line when you move slowly and flings it out ahead of the
+pen when you move fast, giving spiky bursts. **Speed** sets how far it flings, and the
+**Curved/Straight** button picks the segment type.
+
+**Scrawl** (create) draws a jittery, scribbly line. **Flow** sets how many pen moves pass
+between segments (higher means longer, looser segments), **Detail** sets how many wobbly
+steps each segment has, and **Noise** sets how far each step can wander.
+
 **Gradient** (affect) fades each shape from its colour to transparent, from where the
 stroke starts to where it ends.
 
 Several affects can be on at once, e.g. Mirror and Gradient together.
+
+**Export** saves what's on the canvas: **PNG** (with the background, at full screen
+resolution), **PNG, transparent** (no background), or **SVG** (a vector file for Inkscape,
+Illustrator or a browser). Files are named like `alchemy-2026-11-20-143205.png`. The
+original Alchemy could also export PDF; that would need a library, so it isn't included.
 
 ## To do
 
@@ -45,8 +59,11 @@ Several affects can be on at once, e.g. Mirror and Gradient together.
 | `js/canvas.js` | `core/AlcCanvas.java` | Shape lists, rendering, commit/clear, pointer event dispatch |
 | `js/modules/shapes.js` | `create/Shapes.java` | The Shapes create module |
 | `js/modules/splatter.js` | `create/SplatterShapes.java` | The Splatter create module |
+| `js/modules/speed.js` | `create/SpeedShapes.java` | The Speed create module |
+| `js/modules/scrawl.js` | `create/ScrawlShapes.java` | The Scrawl create module |
 | `js/modules/mirror.js` | `affect/Mirror.java` | The Mirror affect module: reflected copies while you draw |
 | `js/modules/gradient.js` | `affect/Gradient.java` | The Gradient affect module: fade to transparent |
+| `js/export.js` | `core/AlcExportDialog.java` | Export as PNG or SVG |
 | `js/main.js` | — | Startup and toolbar |
 
 ### Adding a module
