@@ -38,6 +38,13 @@
     this.segments = [];
     this.totalPoints = 0;
     this.lastPoint = null;
+    // True for shapes drawn point by point (AlcShape.penShape); Gradient uses it.
+    this.penShape = false;
+    // Optional linear gradient {x1, y1, x2, y2}: shape colour at p1 fading to
+    // transparent at p2, like the GradientPaint set by the Gradient affect.
+    this.gradient = attrs.gradient ? copyGradient(attrs.gradient) : null;
+    // Bumped whenever the path changes, so affects can cache work per shape.
+    this.version = 0;
 
     if (p) {
       // AlcShape.setup(Point): moveTo, then totalPoints++ and savePoints(p).
@@ -48,9 +55,62 @@
     }
   }
 
+  function copyGradient(g) {
+    return { x1: g.x1, y1: g.y1, x2: g.x2, y2: g.y2 };
+  }
+
   Shape.prototype._savePoint = function (p) {
     this.totalPoints++;
     this.lastPoint = { x: p.x, y: p.y };
+    this.penShape = true;
+    this.version++;
+  };
+
+  /**
+   * Append a quadratic curve directly, without smoothing or the minimum
+   * distance check (SplatterShapes does this via getPath().quadTo()).
+   */
+  Shape.prototype.quadTo = function (c, p) {
+    this.path.quadraticCurveTo(c.x, c.y, p.x, p.y);
+    this.segments.push({ type: 'Q', cx: c.x, cy: c.y, x: p.x, y: p.y });
+    this.version++;
+  };
+
+  /** First point of the path (its first moveTo), or null. */
+  Shape.prototype.getStartPoint = function () {
+    for (var i = 0; i < this.segments.length; i++) {
+      if (this.segments[i].type === 'M') return { x: this.segments[i].x, y: this.segments[i].y };
+    }
+    return null;
+  };
+
+  /** Where the path currently ends, like GeneralPath.getCurrentPoint(). */
+  Shape.prototype.getCurrentPoint = function () {
+    for (var i = this.segments.length - 1; i >= 0; i--) {
+      var s = this.segments[i];
+      if (s.type !== 'Z') return { x: s.x, y: s.y };
+    }
+    return null;
+  };
+
+  /** Bounding box of every point and control point, as {x, y, width, height}. */
+  Shape.prototype.getBounds = function () {
+    var minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
+    function add(x, y) {
+      if (x < minX) minX = x;
+      if (y < minY) minY = y;
+      if (x > maxX) maxX = x;
+      if (y > maxY) maxY = y;
+    }
+    for (var i = 0; i < this.segments.length; i++) {
+      var s = this.segments[i];
+      if (s.type === 'Z') continue;
+      add(s.x, s.y);
+      if (s.type === 'Q') add(s.cx, s.cy);
+      if (s.type === 'C') { add(s.c1x, s.c1y); add(s.c2x, s.c2y); }
+    }
+    if (minX === Infinity) return { x: 0, y: 0, width: 0, height: 0 };
+    return { x: minX, y: minY, width: maxX - minX, height: maxY - minY };
   };
 
   /** Smoothed point: straight lines at first, then quadratic curves through midpoints. */
@@ -99,6 +159,7 @@
       else if (s.type === 'Z') path.closePath();
     }
     this.path = path;
+    this.version++;
   };
 
   /**
@@ -124,6 +185,12 @@
     });
     copy.totalPoints = this.totalPoints;
     copy.lastPoint = this.lastPoint ? map(this.lastPoint) : null;
+    copy.penShape = this.penShape;
+    if (this.gradient) {
+      var g1 = map({ x: this.gradient.x1, y: this.gradient.y1 });
+      var g2 = map({ x: this.gradient.x2, y: this.gradient.y2 });
+      copy.gradient = { x1: g1.x, y1: g1.y, x2: g2.x, y2: g2.y };
+    }
     copy.rebuildPath();
     return copy;
   };
@@ -138,18 +205,31 @@
     return pts;
   };
 
-  /** Colour with the shape's alpha applied, as a CSS string. */
-  Shape.prototype.cssColor = function () {
+  /** Colour with the given alpha (default: the shape's own), as a CSS string. */
+  Shape.prototype.cssColor = function (alpha) {
     var hex = this.color.replace('#', '');
     var r = parseInt(hex.substr(0, 2), 16);
     var g = parseInt(hex.substr(2, 2), 16);
     var b = parseInt(hex.substr(4, 2), 16);
-    return 'rgba(' + r + ',' + g + ',' + b + ',' + (this.alpha / 255) + ')';
+    var a = (alpha != null ? alpha : this.alpha) / 255;
+    return 'rgba(' + r + ',' + g + ',' + b + ',' + a + ')';
+  };
+
+  /** Solid colour, or the gradient if one is set (AlcShape.getPaint). */
+  Shape.prototype.getPaint = function (ctx) {
+    var g = this.gradient;
+    // A zero-length canvas gradient paints nothing, so fall back to the colour.
+    if (!g || (g.x1 === g.x2 && g.y1 === g.y2)) return this.cssColor();
+    // Like an acyclic java.awt.GradientPaint: solid before p1, clear after p2.
+    var paint = ctx.createLinearGradient(g.x1, g.y1, g.x2, g.y2);
+    paint.addColorStop(0, this.cssColor());
+    paint.addColorStop(1, this.cssColor(0));
+    return paint;
   };
 
   /** Draw onto a 2D context, matching AlcCanvas.paintComponent. */
   Shape.prototype.draw = function (ctx) {
-    var paint = this.cssColor();
+    var paint = this.getPaint(ctx);
     if (this.style === STYLE_STROKE) {
       // Java's BasicStroke(0) still draws a hairline; canvas ignores 0, so clamp.
       ctx.lineWidth = Math.max(this.lineWidth, 0.5);

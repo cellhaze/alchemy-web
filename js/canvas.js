@@ -116,7 +116,9 @@
   };
 
   Canvas.prototype.setCreateModule = function (module) {
-    if (this.createModule && this.createModule.deselect) this.createModule.deselect();
+    if (module === this.createModule) return;
+    if (this.hasCreateShapes()) this.commitShapes();
+    if (this.createModule && this.createModule.deselect) this.createModule.deselect(this);
     this.createModule = module;
     if (module && module.setup) module.setup(this);
   };
@@ -226,7 +228,10 @@
     el.addEventListener('pointermove', function (e) {
       if (self._activePointer !== null && e.pointerId !== self._activePointer) return;
       // Coalesced events give every sample from a fast pen, not one per frame.
-      var events = (e.getCoalescedEvents && e.getCoalescedEvents().length) ?
+      // Modules that measure speed per event (like SplatterShapes) can opt out
+      // with `coalesced: false`, so events arrive at a rate closer to Java's.
+      var wantAll = !self.createModule || self.createModule.coalesced !== false;
+      var events = (wantAll && e.getCoalescedEvents && e.getCoalescedEvents().length) ?
         e.getCoalescedEvents() : [e];
       for (var i = 0; i < events.length; i++) {
         self._updatePen(events[i]);

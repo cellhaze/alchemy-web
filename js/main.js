@@ -14,6 +14,43 @@
   canvas.setCreateModule(Alchemy.modules.shapes);
   Alchemy.canvas = canvas; // handy for poking at from the browser console
 
+  function pressed(button, on) {
+    button.setAttribute('aria-pressed', on ? 'true' : 'false');
+  }
+
+  // Create module switcher: one create module at a time, each may have options
+  var createButtons = document.querySelectorAll('.create-module');
+  var createOptions = { splatter: document.getElementById('splatter-options') };
+  function selectCreate(id) {
+    canvas.setCreateModule(Alchemy.modules[id]);
+    for (var i = 0; i < createButtons.length; i++) {
+      pressed(createButtons[i], createButtons[i].dataset.module === id);
+    }
+    for (var key in createOptions) createOptions[key].hidden = key !== id;
+  }
+  for (var i = 0; i < createButtons.length; i++) {
+    createButtons[i].addEventListener('click', function () {
+      selectCreate(this.dataset.module);
+    });
+  }
+
+  // Splatter options
+  function clampInput(input) {
+    var v = Math.round(Number(input.value));
+    if (isNaN(v)) v = Number(input.defaultValue);
+    v = Math.min(Number(input.max), Math.max(Number(input.min), v));
+    input.value = v;
+    return v;
+  }
+  var splatterSize = document.getElementById('splatter-size');
+  var splatterDrips = document.getElementById('splatter-drips');
+  splatterSize.addEventListener('change', function () {
+    Alchemy.modules.splatter.setSize(clampInput(splatterSize));
+  });
+  splatterDrips.addEventListener('change', function () {
+    Alchemy.modules.splatter.setDrips(clampInput(splatterDrips));
+  });
+
   // Style: line (stroke) or solid (fill)
   var styleButton = document.getElementById('style');
   function showStyle() {
@@ -58,10 +95,6 @@
   var mirrorV = document.getElementById('mirror-v');
   var mirrorAxis = document.getElementById('mirror-axis');
 
-  function pressed(button, on) {
-    button.setAttribute('aria-pressed', on ? 'true' : 'false');
-  }
-
   mirrorButton.addEventListener('click', function () {
     var on = !canvas.isAffectActive(mirror);
     canvas.setAffect(mirror, on);
@@ -87,6 +120,14 @@
   mirror.onAxisSelectEnd = function () { pressed(mirrorAxis, false); };
   document.getElementById('mirror-reset').addEventListener('click', function () {
     mirror.resetAxis();
+  });
+
+  // Gradient affect
+  var gradientButton = document.getElementById('gradient');
+  gradientButton.addEventListener('click', function () {
+    var on = !canvas.isAffectActive(Alchemy.modules.gradient);
+    canvas.setAffect(Alchemy.modules.gradient, on);
+    pressed(gradientButton, on);
   });
 
   // Keyboard shortcuts: S toggles style, Backspace/Delete clears, Esc cancels axis select

@@ -14,6 +14,23 @@
   <canvas id="canvas"></canvas>
 
   <div id="toolbar" role="toolbar" aria-label="Drawing tools">
+    <div class="sub" role="group" aria-label="Create module">
+      <button class="create-module" data-module="shapes" type="button" aria-pressed="true" title="Shapes: freehand lines and shapes">Shapes</button>
+      <button class="create-module" data-module="splatter" type="button" aria-pressed="false" title="Splatter: paint splats and drips, fatter when you move slowly">Splatter</button>
+    </div>
+    <div id="splatter-options" class="sub" hidden>
+      <label class="tool" title="The size of the splatter">
+        <span>Size</span>
+        <input id="splatter-size" type="number" min="1" max="100" step="1" value="50">
+      </label>
+      <label class="tool" title="The number of drips">
+        <span>Drips</span>
+        <input id="splatter-drips" type="number" min="0" max="50" step="1" value="10">
+      </label>
+    </div>
+
+    <span class="separator" aria-hidden="true"></span>
+
     <button id="style" type="button" title="Line or solid style (S)">Line</button>
     <label class="tool" title="Colour">
       <span class="visually-hidden">Colour</span>
@@ -35,12 +52,15 @@
       <button id="mirror-axis" type="button" aria-pressed="false" title="Click on the canvas to place the mirror axis (Esc cancels)">Set axis</button>
       <button id="mirror-reset" type="button" title="Move the axis back to the centre of the canvas">Centre</button>
     </div>
+    <button id="gradient" type="button" aria-pressed="false" title="Gradient affect: fade each shape from its colour to transparent">Gradient</button>
   </div>
 
   <script src="js/shape.js"></script>
   <script src="js/canvas.js"></script>
   <script src="js/modules/shapes.js"></script>
+  <script src="js/modules/splatter.js"></script>
   <script src="js/modules/mirror.js"></script>
+  <script src="js/modules/gradient.js"></script>
   <script src="js/main.js"></script>
 </body>
 </html>

@@ -161,11 +161,29 @@
       var count = maps.length;
       if (!count) return;
 
+      var axisKey = ax + ',' + ay;
       for (var i = 0; i < c.createShapes.length; i++) {
         var shape = c.createShapes[i];
+        // Everything a copy depends on besides the path itself.
+        var g = shape.gradient;
+        var key = axisKey + '|' + shape.style + '|' + shape.color + '|' + shape.alpha + '|' +
+          shape.lineWidth + '|' + (g ? [g.x1, g.y1, g.x2, g.y2].join() : '');
         for (var k = 0; k < count; k++) {
+          var index = i * count + k;
+          var old = c.affectShapes[index];
+          // Skip shapes that haven't changed since they were last copied; modules
+          // like SplatterShapes leave hundreds of finished shapes in createShapes.
+          if (old && old._mirrorOf === shape && old._mirrorMap === k &&
+              old._mirrorVersion === shape.version && old._mirrorKey === key) {
+            continue;
+          }
           // Replace the copy in place, or add it if this shape is new.
-          c.affectShapes[i * count + k] = shape.transformed(maps[k]);
+          var copy = shape.transformed(maps[k]);
+          copy._mirrorOf = shape;
+          copy._mirrorMap = k;
+          copy._mirrorVersion = shape.version;
+          copy._mirrorKey = key;
+          c.affectShapes[index] = copy;
         }
       }
     }
