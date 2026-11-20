@@ -1,6 +1,6 @@
 # Alchemy Web
 
-A browser port of [Alchemy](../README.md), the experimental open drawing project, using
+A browser port of [Alchemy](https://github.com/karldd/Alchemy), the experimental open drawing project, using
 plain HTML, CSS, JavaScript and the Canvas 2D API.
 
 This first step has a full-screen canvas, the basic **Shapes** create module (freehand),
