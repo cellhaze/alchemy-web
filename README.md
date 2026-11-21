@@ -63,6 +63,17 @@ see the outline traced around the stroke. Mirror, Gradient and Displace all work
 reveal it. **Auto-reveal** (on by default) shows the drawing each time you lift the pen;
 **Reveal** or the **R** key shows it any time. Clear still clears the screen.
 
+**Color Switcher** (affect) gives each new stroke a new random colour and/or transparency.
+**Base Color** switches the colour, wandering around the base colour in the swatch next to
+it (it starts as your toolbar colour) by up to **Range**. **Transparency** switches the
+opacity too, and **Constant** keeps switching while you draw. The toolbar colour and opacity
+update to show what it picked. As in the desktop client, the hue doesn't wrap around: near
+red it drifts toward orange and yellow, not toward purple.
+
+**Limit** (affect) keeps only the most recent **Number** shapes (default 10); older ones
+disappear as you draw. Strokes in progress and mirror copies count too. Turning it off
+doesn't bring removed shapes back.
+
 **Gradient** (affect) fades each shape from its colour to transparent, from where the
 stroke starts to where it ends.
 
@@ -121,6 +132,8 @@ original Alchemy could also export PDF; that would need a library, so it isn't i
 | `js/modules/median.js` | `create/MedianShapes.java` | The Median create module |
 | `js/modules/pressure.js` | `create/PressureShapes.java` | The Pressure create module |
 | `js/modules/blindness.js` | `affect/Blindness.java` | The Blindness affect module |
+| `js/modules/colorswitcher.js` | `affect/ColorSwitcher.java` | The Color Switcher affect module |
+| `js/modules/limit.js` | `affect/Limit.java` | The Limit affect module |
 | `js/modules/mirror.js` | `affect/Mirror.java` | The Mirror affect module: reflected copies while you draw |
 | `js/modules/gradient.js` | `affect/Gradient.java` | The Gradient affect module: fade to transparent |
 | `js/modules/smooth.js` | `affect/Smooth.java` | The Smooth affect module: round off shapes you hover over |

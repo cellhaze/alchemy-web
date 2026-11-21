@@ -140,6 +140,28 @@
       <button id="blindness-reveal" type="button" title="Reveal the screen (R)">Reveal</button>
       <button id="blindness-auto" type="button" aria-pressed="true" title="Reveal the screen after each shape is drawn">Auto-reveal</button>
     </div>
+    <button id="colorswitcher" type="button" aria-pressed="false" title="Color Switcher affect: each new stroke gets a new random colour and/or transparency">Color Switcher</button>
+    <div id="colorswitcher-options" class="sub" hidden>
+      <button id="cs-base" type="button" aria-pressed="true" title="Switch colours, wandering around the base colour">Base Color</button>
+      <label class="tool" title="The base colour to wander from">
+        <span class="visually-hidden">Base colour</span>
+        <input id="cs-base-color" type="color">
+      </label>
+      <label class="tool" title="How far the colour can wander from the base">
+        <span>Range</span>
+        <input id="cs-range" type="range" min="0" max="100" step="1" value="50">
+        <output for="cs-range">50</output>
+      </label>
+      <button id="cs-alpha" type="button" aria-pressed="true" title="Switch transparency too">Transparency</button>
+      <button id="cs-constant" type="button" aria-pressed="false" title="Keep switching colours while you draw">Constant</button>
+    </div>
+    <button id="limit" type="button" aria-pressed="false" title="Limit affect: keep only the most recent shapes; older ones disappear">Limit</button>
+    <div id="limit-options" class="sub" hidden>
+      <label class="tool" title="The number of shapes to keep">
+        <span>Number</span>
+        <input id="limit-number" type="number" min="1" max="100" step="1" value="10">
+      </label>
+    </div>
     <button id="displace" type="button" aria-pressed="false" title="Displace affect: the shape you draw swells when you move slowly and shrinks when you move fast">Displace</button>
     <div id="displace-options" class="sub" hidden>
       <label class="tool" title="Change the amount of displacement">
@@ -163,6 +185,8 @@
   <script src="js/modules/median.js"></script>
   <script src="js/modules/pressure.js"></script>
   <script src="js/modules/blindness.js"></script>
+  <script src="js/modules/colorswitcher.js"></script>
+  <script src="js/modules/limit.js"></script>
   <script src="js/modules/mirror.js"></script>
   <script src="js/modules/gradient.js"></script>
   <script src="js/modules/smooth.js"></script>

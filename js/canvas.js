@@ -57,6 +57,9 @@
     this.createEvents = true;
     // When false the screen isn't updated while drawing (Blindness).
     this.redrawEnabled = true;
+    // Called when a module changes colour/opacity, so the toolbar can update
+    // (AlcCanvas.refreshColorButtonRelay). Set by main.js.
+    this.onSettingsChanged = null;
 
     this._frameRequested = false;
     this._activePointer = null;
@@ -102,6 +105,14 @@
         self._paint();
       });
     }
+  };
+
+  /**
+   * Re-render the finished shapes into the buffer, e.g. after an affect
+   * removes or changes some. The next paint shows the result.
+   */
+  Canvas.prototype.renderBuffer = function () {
+    this._renderBuffer();
   };
 
   /** Turn screen updates on or off (AlcCanvas.setRedraw). */

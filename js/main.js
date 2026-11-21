@@ -288,6 +288,49 @@
     pressed(blindnessAuto, blindness.autoReveal);
   });
 
+  // Color Switcher affect
+  var cs = Alchemy.modules.colorswitcher;
+  affectToggle('colorswitcher', cs, 'colorswitcher-options');
+  var csBaseColor = document.getElementById('cs-base-color');
+  document.getElementById('colorswitcher').addEventListener('click', function () {
+    // The base colour starts as the toolbar colour the first time it's turned on
+    if (cs.baseColor) csBaseColor.value = cs.baseColor;
+  });
+  csBaseColor.addEventListener('input', function () {
+    cs.setBaseColor(csBaseColor.value);
+  });
+  var csBase = document.getElementById('cs-base');
+  csBase.addEventListener('click', function () {
+    cs.switchColor = !cs.switchColor;
+    pressed(csBase, cs.switchColor);
+  });
+  slider('cs-range', function (v) { cs.range = v; });
+  var csAlpha = document.getElementById('cs-alpha');
+  csAlpha.addEventListener('click', function () {
+    cs.switchAlpha = !cs.switchAlpha;
+    pressed(csAlpha, cs.switchAlpha);
+  });
+  var csConstant = document.getElementById('cs-constant');
+  csConstant.addEventListener('click', function () {
+    cs.constant = !cs.constant;
+    pressed(csConstant, cs.constant);
+  });
+
+  // Keep the toolbar's colour and opacity in step when a module changes them
+  canvas.onSettingsChanged = function () {
+    colorInput.value = canvas.color;
+    opacityInput.value = Math.max(1, Math.round(canvas.alpha / 255 * 100));
+    opacityValue.textContent = opacityInput.value + '%';
+  };
+
+  // Limit affect
+  affectToggle('limit', Alchemy.modules.limit, 'limit-options');
+  var limitNumber = document.getElementById('limit-number');
+  limitNumber.addEventListener('change', function () {
+    Alchemy.modules.limit.limit = clampInput(limitNumber);
+    canvas.redraw();
+  });
+
   // Displace affect
   affectToggle('displace', Alchemy.modules.displace, 'displace-options');
   slider('displace-amount', function (v) { Alchemy.modules.displace.displacement = v; });
