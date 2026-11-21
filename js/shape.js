@@ -45,6 +45,10 @@
     this.gradient = attrs.gradient ? copyGradient(attrs.gradient) : null;
     // Bumped whenever the path changes, so affects can cache work per shape.
     this.version = 0;
+    // Variable-width strokes (AlcShape.spine): the centre line and the width
+    // at each point. The path is the outline built around it by createSpine().
+    this.spine = null;
+    this.spineWidth = null;
 
     if (p) {
       // AlcShape.setup(Point): moveTo, then totalPoints++ and savePoints(p).
@@ -64,6 +68,66 @@
     this.lastPoint = { x: p.x, y: p.y };
     this.penShape = true;
     this.version++;
+  };
+
+  var MIN_DISTANCE_SPINE = 3; // spine points closer than this (px) are ignored
+
+  /**
+   * The point `distance` px from p1, at a right angle to the line from p2 to
+   * p1 (AlcShape.rightAngle). Positive distances go to the left of travel.
+   */
+  Shape.rightAngle = function (p1, p2, distance) {
+    var angle = Math.atan2(p1.y - p2.y, p1.x - p2.x) - Math.PI / 2;
+    return { x: p1.x + distance * Math.cos(angle), y: p1.y + distance * Math.sin(angle) };
+  };
+
+  Shape.prototype.hasSpine = function () {
+    return this.spine !== null;
+  };
+
+  /** Restart the path at p (AlcShape.setPoint). Like the Java, lastPoint is kept. */
+  Shape.prototype.setPoint = function (p) {
+    this.path = new Path2D();
+    this.path.moveTo(p.x, p.y);
+    this.segments = [{ type: 'M', x: p.x, y: p.y }];
+    this.totalPoints = 1;
+    this.version++;
+  };
+
+  /** Add a centre-line point with a width, and rebuild the outline (AlcShape.spineTo). */
+  Shape.prototype.spineTo = function (p, width) {
+    this.penShape = true;
+    if (!this.spine) this.spine = [];
+    if (!this.spineWidth) this.spineWidth = [];
+    if (this.spine.length === 0) {
+      this.spine.push({ x: p.x, y: p.y });
+      this.spineWidth.push(width);
+    } else if (distance(p, this.spine[this.spine.length - 1]) > MIN_DISTANCE_SPINE) {
+      this.spine.push({ x: p.x, y: p.y });
+      this.spineWidth.push(width);
+      this.createSpine();
+    }
+  };
+
+  /**
+   * Rebuild the closed outline from the spine (AlcShape.createSpine): out
+   * along one side, offset by each point's width at a right angle, then back
+   * along the other side.
+   */
+  Shape.prototype.createSpine = function () {
+    var spine = this.spine, widths = this.spineWidth;
+    if (!spine || spine.length === 0) return;
+    this.setPoint(spine[0]);
+    var i;
+    for (i = 1; i < spine.length; i++) {
+      this.curveTo(Shape.rightAngle(spine[i], spine[i - 1], widths[i]));
+    }
+    for (var j = 1; j < spine.length; j++) {
+      var index = spine.length - j;
+      this.curveTo(Shape.rightAngle(spine[index - 1], spine[index], widths[index]));
+    }
+    this.path.closePath();
+    this.segments.push({ type: 'Z' });
   };
 
   /**
@@ -186,6 +250,10 @@
     copy.totalPoints = this.totalPoints;
     copy.lastPoint = this.lastPoint ? map(this.lastPoint) : null;
     copy.penShape = this.penShape;
+    if (this.spine) {
+      copy.spine = this.spine.map(map);
+      copy.spineWidth = this.spineWidth.slice();
+    }
     if (this.gradient) {
       var g1 = map({ x: this.gradient.x1, y: this.gradient.y1 });
       var g2 = map({ x: this.gradient.x2, y: this.gradient.y2 });

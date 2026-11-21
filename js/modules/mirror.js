@@ -16,8 +16,8 @@
  *
  * As in the original, the copies for create shape i sit at
  * affectShapes[i * shapeCount + k], where shapeCount is how many copies each
- * shape gets (1 to 3). Spines and gradient paints aren't ported yet, so they
- * aren't reflected here either.
+ * shape gets (1 to 3). Gradients and pressure-stroke spines are reflected
+ * along with the path (Shape.transformed handles both).
  */
 (function (Alchemy) {
   'use strict';

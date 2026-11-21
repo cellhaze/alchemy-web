@@ -24,6 +24,13 @@
       <button class="create-module" data-module="detach" type="button" aria-pressed="false" title="Detach: the line trails behind the pen on a leash">Detach</button>
       <button class="create-module" data-module="xshapes" type="button" aria-pressed="false" title="X Shapes: a zig-zag fan that sprays out to one side of your stroke">X Shapes</button>
       <button class="create-module" data-module="median" type="button" aria-pressed="false" title="Median: each stroke also draws a line halfway to the previous stroke">Median</button>
+      <button class="create-module" data-module="pressure" type="button" aria-pressed="false" title="Pressure: a stroke that swells and thins with pen pressure (best in Solid style)">Pressure</button>
+    </div>
+    <div id="pressure-options" class="sub" hidden>
+      <label class="tool" title="How wide full pen pressure makes the stroke, on each side">
+        <span>Pressure</span>
+        <input id="pressure-amount" type="number" min="1" max="200" step="1" value="25">
+      </label>
     </div>
     <div id="xshapes-options" class="sub" hidden>
       <label class="tool" title="How far the zig-zag sprays out">
@@ -128,6 +135,11 @@
     <div id="smooth-options" class="sub" hidden>
       <button id="smooth-repeat" type="button" aria-pressed="false" title="Add smoothed copies instead of changing the shape">Repeat</button>
     </div>
+    <button id="blindness" type="button" aria-pressed="false" title="Blindness affect: draw without seeing; the drawing appears when you reveal it">Blindness</button>
+    <div id="blindness-options" class="sub" hidden>
+      <button id="blindness-reveal" type="button" title="Reveal the screen (R)">Reveal</button>
+      <button id="blindness-auto" type="button" aria-pressed="true" title="Reveal the screen after each shape is drawn">Auto-reveal</button>
+    </div>
     <button id="displace" type="button" aria-pressed="false" title="Displace affect: the shape you draw swells when you move slowly and shrinks when you move fast">Displace</button>
     <div id="displace-options" class="sub" hidden>
       <label class="tool" title="Change the amount of displacement">
@@ -149,6 +161,8 @@
   <script src="js/modules/detach.js"></script>
   <script src="js/modules/xshapes.js"></script>
   <script src="js/modules/median.js"></script>
+  <script src="js/modules/pressure.js"></script>
+  <script src="js/modules/blindness.js"></script>
   <script src="js/modules/mirror.js"></script>
   <script src="js/modules/gradient.js"></script>
   <script src="js/modules/smooth.js"></script>

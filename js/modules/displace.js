@@ -16,9 +16,10 @@
  * faster pulls them inward. Line and curve points move (curve control
  * points too); cubic segments are left as they are, as in the Java.
  *
+ * Pressure strokes move their centre line instead and rebuild the outline.
+ *
  * The effect is applied once per redraw, and modules redraw once per pen
  * event, so it is stronger at higher event rates (e.g. a fast tablet).
- * Pressure "spine" shapes aren't ported yet, so that branch is left out.
  */
 (function (Alchemy) {
   'use strict';
@@ -53,6 +54,16 @@
         var shape = c.createShapes[i];
         var last = shape.getCurrentPoint();
         if (!last) continue;
+        if (shape.hasSpine()) {
+          // Pressure strokes: move the centre line, then rebuild the outline
+          if (shape.spine.length > 1) {
+            for (var j = 0; j < shape.spine.length; j++) {
+              shape.spine[j] = push(shape.spine[j], last, speed);
+            }
+            shape.createSpine();
+          }
+          continue;
+        }
         var segs = shape.segments.map(function (s) {
           if (s.type === 'M' || s.type === 'L') {
             var p = push(s, last, speed);

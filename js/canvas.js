@@ -55,6 +55,8 @@
     // When false the create module gets no pointer events (AlcCanvas.setCreateEvents),
     // e.g. while Mirror is waiting for the user to pick an axis.
     this.createEvents = true;
+    // When false the screen isn't updated while drawing (Blindness).
+    this.redrawEnabled = true;
 
     this._frameRequested = false;
     this._activePointer = null;
@@ -81,12 +83,17 @@
     return this.createShapes.length ? this.createShapes[this.createShapes.length - 1] : null;
   };
 
-  /** Run the affects, then repaint on the next animation frame. */
+  /**
+   * Run the affects, then repaint on the next animation frame. When redrawing
+   * is switched off (Blindness), the shapes still update but the screen stays
+   * as it was until forceRedraw().
+   */
   Canvas.prototype.redraw = function (fullRedraw) {
     for (var i = 0; i < this.affectModules.length; i++) {
       if (this.affectModules[i].affect) this.affectModules[i].affect();
     }
     if (fullRedraw) this._renderBuffer();
+    if (this.redrawEnabled === false) return;
     if (!this._frameRequested) {
       this._frameRequested = true;
       var self = this;
@@ -95,6 +102,17 @@
         self._paint();
       });
     }
+  };
+
+  /** Turn screen updates on or off (AlcCanvas.setRedraw). */
+  Canvas.prototype.setRedraw = function (on) {
+    this.redrawEnabled = on;
+  };
+
+  /** Repaint everything now, even if redrawing is off (AlcCanvas.forceRedraw). */
+  Canvas.prototype.forceRedraw = function () {
+    this._renderBuffer();
+    this._paint(true);
   };
 
   /** Move create/affect shapes into the finished list and flatten them into the buffer. */
@@ -119,6 +137,8 @@
       if (mods[i] && mods[i].cleared) mods[i].cleared();
     }
     this.redraw(true);
+    // Clear the screen even if redrawing is off, as in AlcCanvas.clear()
+    if (this.redrawEnabled === false) this.forceRedraw();
   };
 
   Canvas.prototype.setCreateModule = function (module) {
@@ -252,7 +272,12 @@
     if (r) ctx.drawImage(this.bgImage, r.x, r.y, r.width, r.height);
   };
 
-  Canvas.prototype._paint = function () {
+  /**
+   * Paint the screen. With redrawing off (Blindness), only the background and
+   * finished shapes are drawn, like AlcCanvas.paintComponent skipping the
+   * create/affect lists; `force` draws everything.
+   */
+  Canvas.prototype._paint = function (force) {
     var ctx = this.ctx;
     ctx.setTransform(1, 0, 0, 1, 0, 0);
     ctx.fillStyle = this.bgColor;
@@ -261,7 +286,8 @@
     if (this.bgImage) this._withScale(ctx, function (c) { self.drawBackgroundImage(c); });
     ctx.drawImage(this.buffer, 0, 0);
 
-    var lists = [this.createShapes, this.affectShapes, this.guideShapes];
+    var lists = (this.redrawEnabled || force) ?
+      [this.createShapes, this.affectShapes, this.guideShapes] : [this.guideShapes];
     this._withScale(ctx, function (c) {
       for (var j = 0; j < lists.length; j++) {
         for (var i = 0; i < lists[j].length; i++) lists[j][i].draw(c);

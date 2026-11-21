@@ -14,8 +14,8 @@
  *     currently ends, recalculated on every redraw so it stretches as you draw.
  *   - Other shapes (e.g. stamped ones, in later modules): between two random
  *     points inside the shape's bounds, chosen once.
- * The original also handles pressure "spine" shapes (start of spine to its
- * middle); spines aren't ported yet.
+ *   - Pressure (spine) strokes: from the start of the centre line to its
+ *     middle, as in the Java.
  */
 (function (Alchemy) {
   'use strict';
@@ -27,8 +27,16 @@
   function setGradient(shape) {
     var p1 = null, p2 = null;
     if (shape.penShape) {
-      p1 = shape.getStartPoint();
-      p2 = shape.getCurrentPoint();
+      if (shape.hasSpine()) {
+        // Pressure strokes: from the start of the spine to its middle
+        if (shape.spine.length > 0) {
+          p1 = shape.spine[0];
+          p2 = shape.spine[Math.floor(shape.spine.length / 2)];
+        }
+      } else {
+        p1 = shape.getStartPoint();
+        p2 = shape.getCurrentPoint();
+      }
     } else if (!shape.gradient) {
       var bounds = shape.getBounds();
       p1 = randomPoint(bounds);

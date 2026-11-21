@@ -25,7 +25,8 @@
     speed: document.getElementById('speed-options'),
     scrawl: document.getElementById('scrawl-options'),
     detach: document.getElementById('detach-options'),
-    xshapes: document.getElementById('xshapes-options')
+    xshapes: document.getElementById('xshapes-options'),
+    pressure: document.getElementById('pressure-options')
   };
   function selectCreate(id) {
     canvas.setCreateModule(Alchemy.modules[id]);
@@ -86,6 +87,12 @@
 
   // X Shapes options: the Java slider value is halved into the multiplier
   slider('xshapes-distance', function (v) { Alchemy.modules.xshapes.multiplier = Math.trunc(v / 2); });
+
+  // Pressure options
+  var pressureAmount = document.getElementById('pressure-amount');
+  pressureAmount.addEventListener('change', function () {
+    Alchemy.modules.pressure.amount = clampInput(pressureAmount);
+  });
 
   // Style: line (stroke) or solid (fill)
   var styleButton = document.getElementById('style');
@@ -269,6 +276,18 @@
     pressed(smoothRepeat, Alchemy.modules.smooth.repeat);
   });
 
+  // Blindness affect
+  var blindness = Alchemy.modules.blindness;
+  affectToggle('blindness', blindness, 'blindness-options');
+  document.getElementById('blindness-reveal').addEventListener('click', function () {
+    blindness.reveal();
+  });
+  var blindnessAuto = document.getElementById('blindness-auto');
+  blindnessAuto.addEventListener('click', function () {
+    blindness.autoReveal = !blindness.autoReveal;
+    pressed(blindnessAuto, blindness.autoReveal);
+  });
+
   // Displace affect
   affectToggle('displace', Alchemy.modules.displace, 'displace-options');
   slider('displace-amount', function (v) { Alchemy.modules.displace.displacement = v; });
@@ -280,7 +299,9 @@
       return;
     }
     if (e.target.tagName === 'INPUT' || e.metaKey || e.ctrlKey || e.altKey) return;
-    if (e.key === 's' || e.key === 'S') {
+    if ((e.key === 'r' || e.key === 'R') && canvas.isAffectActive(blindness)) {
+      blindness.reveal();
+    } else if (e.key === 's' || e.key === 'S') {
       styleButton.click();
     } else if (e.key === 'Backspace' || e.key === 'Delete') {
       e.preventDefault();
