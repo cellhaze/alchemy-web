@@ -40,6 +40,10 @@ stroke starts to where it ends.
 
 Several affects can be on at once, e.g. Mirror and Gradient together.
 
+**Opacity** sets how see-through new strokes are (1–100%). Like colour and weight, it
+applies to what you draw next; strokes already on the canvas keep their opacity.
+**Background** changes the canvas colour straight away, and exports use it too.
+
 **Flip H** and **Flip V** mirror the whole drawing left-to-right or top-to-bottom, like
 Edit > Flip in the desktop client. As in the original, the background image isn't flipped.
 

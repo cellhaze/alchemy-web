@@ -110,6 +110,26 @@
   weightInput.addEventListener('input', showWeight);
   showWeight();
 
+  // Opacity: shown as 1-100%, stored as Alchemy's 0-255 alpha. Like colour and
+  // weight it applies to new strokes; shapes already drawn keep theirs.
+  var opacityInput = document.getElementById('opacity');
+  var opacityValue = document.getElementById('opacity-value');
+  opacityInput.value = Math.round(canvas.alpha / 255 * 100);
+  function showOpacity() {
+    canvas.alpha = Math.round(Number(opacityInput.value) / 100 * 255);
+    opacityValue.textContent = opacityInput.value + '%';
+  }
+  opacityInput.addEventListener('input', showOpacity);
+  showOpacity();
+
+  // Background colour: repaints straight away, and is used by the exports
+  var bgColorInput = document.getElementById('bg-color');
+  bgColorInput.value = canvas.bgColor;
+  bgColorInput.addEventListener('input', function () {
+    canvas.bgColor = bgColorInput.value;
+    canvas.redraw();
+  });
+
   // Clear
   document.getElementById('clear').addEventListener('click', function () {
     canvas.clear();

@@ -139,7 +139,18 @@ html, body {
   gap: 6px;
 }
 
-#color {
+#opacity {
+  width: 90px;
+}
+
+#opacity-value {
+  min-width: 4ch;
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+#color,
+#bg-color {
   width: 32px;
   height: 28px;
   padding: 0;

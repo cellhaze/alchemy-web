@@ -69,6 +69,15 @@
       <input id="weight" type="range" min="1" max="50" step="1">
       <output id="weight-value">1</output>
     </label>
+    <label class="tool" title="Brush opacity for new strokes">
+      <span>Opacity</span>
+      <input id="opacity" type="range" min="1" max="100" step="1" value="100">
+      <output id="opacity-value">100%</output>
+    </label>
+    <label class="tool" title="Background colour of the canvas">
+      <span>Background</span>
+      <input id="bg-color" type="color" value="#ffffff">
+    </label>
     <button id="clear" type="button" title="Clear the canvas (Backspace)">Clear</button>
     <button id="export" type="button" aria-pressed="false" aria-controls="export-options" title="Export the canvas as an image">Export</button>
     <div id="export-options" class="sub" hidden>
