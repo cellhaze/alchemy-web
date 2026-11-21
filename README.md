@@ -43,6 +43,17 @@ the next move starts a new one. Touch screens can't hover, so it doesn't work wi
 so corners round off and the line lags behind your hand. The end of the leash is remembered
 between strokes, so each stroke starts from where the last one left off.
 
+**X Shapes** (create) sprays a zig-zag fan out to one side of your stroke, at right angles
+to the direction you're moving. It grows wilder the longer the stroke, and faster movement
+throws it further; **Distance** scales it. As in the desktop client, "faster" is measured
+against the average of every move since you first used the module, so it reacts less to
+speed over time.
+
+**Median** (create) blends each stroke with the one before. The first stroke after a clear
+is drawn normally. Every later stroke also draws a second line halfway between your pen and
+the matching part of the previous stroke, so shapes morph into each other in a chain.
+Clearing the canvas starts the chain over.
+
 **Gradient** (affect) fades each shape from its colour to transparent, from where the
 stroke starts to where it ends.
 
@@ -94,6 +105,8 @@ original Alchemy could also export PDF; that would need a library, so it isn't i
 | `js/modules/scrawl.js` | `create/ScrawlShapes.java` | The Scrawl create module |
 | `js/modules/inverse.js` | `create/InverseShapes.java` | The Inverse create module |
 | `js/modules/detach.js` | `create/DetachShapes.java` | The Detach create module |
+| `js/modules/xshapes.js` | `create/XShapes.java` | The X Shapes create module |
+| `js/modules/median.js` | `create/MedianShapes.java` | The Median create module |
 | `js/modules/mirror.js` | `affect/Mirror.java` | The Mirror affect module: reflected copies while you draw |
 | `js/modules/gradient.js` | `affect/Gradient.java` | The Gradient affect module: fade to transparent |
 | `js/modules/smooth.js` | `affect/Smooth.java` | The Smooth affect module: round off shapes you hover over |

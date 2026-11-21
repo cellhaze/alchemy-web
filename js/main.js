@@ -24,7 +24,8 @@
     splatter: document.getElementById('splatter-options'),
     speed: document.getElementById('speed-options'),
     scrawl: document.getElementById('scrawl-options'),
-    detach: document.getElementById('detach-options')
+    detach: document.getElementById('detach-options'),
+    xshapes: document.getElementById('xshapes-options')
   };
   function selectCreate(id) {
     canvas.setCreateModule(Alchemy.modules[id]);
@@ -82,6 +83,9 @@
 
   // Detach options
   slider('detach-distance', function (v) { Alchemy.modules.detach.distance = v; });
+
+  // X Shapes options: the Java slider value is halved into the multiplier
+  slider('xshapes-distance', function (v) { Alchemy.modules.xshapes.multiplier = Math.trunc(v / 2); });
 
   // Style: line (stroke) or solid (fill)
   var styleButton = document.getElementById('style');

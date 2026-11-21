@@ -22,6 +22,15 @@
       <button class="create-module" data-module="scrawl" type="button" aria-pressed="false" title="Scrawl: a jittery, scribbly line">Scrawl</button>
       <button class="create-module" data-module="inverse" type="button" aria-pressed="false" title="Inverse: draws while the button is up (move the mouse or hover the pen); press to end a shape">Inverse</button>
       <button class="create-module" data-module="detach" type="button" aria-pressed="false" title="Detach: the line trails behind the pen on a leash">Detach</button>
+      <button class="create-module" data-module="xshapes" type="button" aria-pressed="false" title="X Shapes: a zig-zag fan that sprays out to one side of your stroke">X Shapes</button>
+      <button class="create-module" data-module="median" type="button" aria-pressed="false" title="Median: each stroke also draws a line halfway to the previous stroke">Median</button>
+    </div>
+    <div id="xshapes-options" class="sub" hidden>
+      <label class="tool" title="How far the zig-zag sprays out">
+        <span>Distance</span>
+        <input id="xshapes-distance" type="range" min="0" max="100" step="1" value="50">
+        <output for="xshapes-distance">50</output>
+      </label>
     </div>
     <div id="detach-options" class="sub" hidden>
       <label class="tool" title="How far behind the pen the line trails, in pixels">
@@ -138,6 +147,8 @@
   <script src="js/modules/scrawl.js"></script>
   <script src="js/modules/inverse.js"></script>
   <script src="js/modules/detach.js"></script>
+  <script src="js/modules/xshapes.js"></script>
+  <script src="js/modules/median.js"></script>
   <script src="js/modules/mirror.js"></script>
   <script src="js/modules/gradient.js"></script>
   <script src="js/modules/smooth.js"></script>
