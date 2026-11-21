@@ -43,12 +43,18 @@
     for (var key in createOptions) createOptions[key].hidden = key !== id;
   }
   for (var i = 0; i < createButtons.length; i++) {
+    // Optional modules (e.g. Splatter, kept out of the public repo) may be missing
+    if (!Alchemy.modules[createButtons[i].dataset.module]) {
+      var wrap = createButtons[i].closest('.has-options') || createButtons[i];
+      wrap.hidden = true;
+      continue;
+    }
     createButtons[i].addEventListener('click', function () {
       selectCreate(this.dataset.module);
     });
   }
 
-  // Splatter options
+  // Splatter options (only does anything if js/modules/splatter.js is present)
   function clampInput(input) {
     var v = Math.round(Number(input.value));
     if (isNaN(v)) v = Number(input.defaultValue);
@@ -59,10 +65,10 @@
   var splatterSize = document.getElementById('splatter-size');
   var splatterDrips = document.getElementById('splatter-drips');
   splatterSize.addEventListener('change', function () {
-    Alchemy.modules.splatter.setSize(clampInput(splatterSize));
+    if (Alchemy.modules.splatter) Alchemy.modules.splatter.setSize(clampInput(splatterSize));
   });
   splatterDrips.addEventListener('change', function () {
-    Alchemy.modules.splatter.setDrips(clampInput(splatterDrips));
+    if (Alchemy.modules.splatter) Alchemy.modules.splatter.setDrips(clampInput(splatterDrips));
   });
 
   /** Wire a range slider to a module setting, showing its value in the <output>. */

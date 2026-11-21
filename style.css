@@ -159,6 +159,10 @@ html, body {
   display: inline-flex;
 }
 
+.has-options[hidden] {
+  display: none;
+}
+
 .popover {
   position: absolute;
   top: calc(100% + 6px);

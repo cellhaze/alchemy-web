@@ -1,0 +1,5 @@
+# The Splatter module is kept local only: it is based on Stamen Design's
+# "Splatter", licensed CC BY-NC-SA 2.5 (no commercial use), which doesn't
+# fit with the rest of the project's GPLv3. The page hides the Splatter
+# button when this file is missing.
+js/modules/splatter.js

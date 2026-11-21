@@ -34,6 +34,11 @@ reacts to speed, and **Drips** sets how many drips each segment throws. It's mad
 style; in Solid style the drips are too small to fill and the splats become thin slivers,
 as in the original.
 
+Splatter isn't included in this repository. It's based on Stamen Design's "Splatter",
+licensed CC BY-NC-SA 2.5, which doesn't allow commercial use and so doesn't fit with the
+project's GPLv3. `js/modules/splatter.js` is listed in `.gitignore`; without it the
+Splatter button is simply hidden and everything else works.
+
 **Speed** (create) draws a normal line when you move slowly and flings it out ahead of the
 pen when you move fast, giving spiky bursts. **Speed** sets how far it flings, and the
 **Curved/Straight** button picks the segment type.
