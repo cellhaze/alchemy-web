@@ -29,6 +29,22 @@
       <button class="create-module" data-module="type" type="button" aria-pressed="false" title="Type: shapes made from distorted letters (Space makes an abstract shape)">Type</button>
       <button class="create-module" data-module="pull" type="button" aria-pressed="false" title="Pull: stamp random shapes from a library">Pull</button>
       <button class="create-module" data-module="evolve" type="button" aria-pressed="false" title="Evolve: stamp shapes bred with a genetic algorithm (open the Evolver to rank and evolve them)">Evolve</button>
+      <button class="create-module" data-module="trace" type="button" aria-pressed="false" title="Trace: a line that snaps to edges in a photo you can keep hidden">Trace</button>
+    </div>
+    <div id="trace-options" class="sub" hidden>
+      <button id="trace-load" type="button" title="Load a photo to trace (otherwise the background image is used)">Load Image…</button>
+      <button id="trace-display" type="button" aria-pressed="false" title="Show or hide the photo being traced">Display Image</button>
+      <label class="tool" title="How far a point can snap, in pixels">
+        <span>Snap</span>
+        <input id="trace-snap" type="range" min="1" max="100" step="1" value="30">
+        <output for="trace-snap">30</output>
+      </label>
+      <label class="tool" title="How much brighter or darker a pixel must be to snap to it">
+        <span>Tolerance</span>
+        <input id="trace-tolerance" type="range" min="0" max="200" step="1" value="100">
+        <output for="trace-tolerance">100</output>
+      </label>
+      <input id="trace-file" type="file" accept="image/*" hidden>
     </div>
     <div id="pull-options" class="sub" hidden>
       <label class="tool" title="Which group of shapes to use">
@@ -244,6 +260,7 @@
         <output for="repeat-interval">50</output>
       </label>
     </div>
+    <button id="shapeswap" type="button" aria-pressed="false" title="Shape Swap affect: your last long stroke comes back after you clear the canvas">Shape Swap</button>
     <button id="displace" type="button" aria-pressed="false" title="Displace affect: the shape you draw swells when you move slowly and shrinks when you move fast">Displace</button>
     <div id="displace-options" class="sub" hidden>
       <label class="tool" title="Change the amount of displacement">
@@ -291,6 +308,8 @@
   <script src="js/shapelib.js"></script>
   <script src="js/modules/pull.js"></script>
   <script src="js/modules/evolve.js"></script>
+  <script src="js/modules/trace.js"></script>
+  <script src="js/modules/shapeswap.js"></script>
   <script src="js/modules/blindness.js"></script>
   <script src="js/modules/colorswitcher.js"></script>
   <script src="js/modules/limit.js"></script>

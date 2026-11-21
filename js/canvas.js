@@ -43,6 +43,8 @@
     // SVG export can embed the picture.
     this.bgImage = null;
     this.bgImageSrc = null;
+    // Optional function(ctx) a module can set to draw under the shapes
+    this.underlay = null;
 
     // Pen state, filled in from pointer events
     this.penDown = false;
@@ -306,6 +308,8 @@
     ctx.fillRect(0, 0, this.el.width, this.el.height);
     var self = this;
     if (this.bgImage) this._withScale(ctx, function (c) { self.drawBackgroundImage(c); });
+    // A module's own image under the drawing (Trace's photo); not exported
+    if (this.underlay) this._withScale(ctx, function (c) { self.underlay(c); });
     ctx.drawImage(this.buffer, 0, 0);
 
     var lists = (this.redrawEnabled || force) ?

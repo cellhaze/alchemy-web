@@ -30,7 +30,8 @@
     ribbon: document.getElementById('ribbon-options'),
     type: document.getElementById('type-options'),
     pull: document.getElementById('pull-options'),
-    evolve: document.getElementById('evolve-options')
+    evolve: document.getElementById('evolve-options'),
+    trace: document.getElementById('trace-options')
   };
   function selectCreate(id) {
     canvas.setCreateModule(Alchemy.modules[id]);
@@ -245,6 +246,35 @@
   document.getElementById('evolver-done').addEventListener('click', function () {
     evolver.close();
   });
+
+  // Trace options
+  var trace = Alchemy.modules.trace;
+  var traceFile = document.getElementById('trace-file');
+  document.getElementById('trace-load').addEventListener('click', function () {
+    traceFile.value = '';
+    traceFile.click();
+  });
+  traceFile.addEventListener('change', function () {
+    var file = traceFile.files && traceFile.files[0];
+    if (!file) return;
+    var reader = new FileReader();
+    reader.onload = function () {
+      var img = new Image();
+      img.onload = function () { trace.setImage(img); };
+      img.onerror = function () {
+        alert('That file couldn’t be loaded as an image. Please choose a JPG, PNG, GIF or WebP file.');
+      };
+      img.src = reader.result;
+    };
+    reader.readAsDataURL(file);
+  });
+  var traceDisplay = document.getElementById('trace-display');
+  traceDisplay.addEventListener('click', function () {
+    trace.setDisplay(!trace.display);
+    pressed(traceDisplay, trace.display);
+  });
+  slider('trace-snap', function (v) { trace.snap = v; });
+  slider('trace-tolerance', function (v) { trace.tolerance = v; });
 
   // Pressure options
   var pressureAmount = document.getElementById('pressure-amount');
@@ -504,6 +534,9 @@
   }
   repeatOn.addEventListener('click', toggleRepeating);
   slider('repeat-interval', function (v) { repeatMod.interval = v; });
+
+  // Shape Swap affect
+  affectToggle('shapeswap', Alchemy.modules.shapeswap);
 
   // Displace affect
   affectToggle('displace', Alchemy.modules.displace, 'displace-options');
