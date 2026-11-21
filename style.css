@@ -69,9 +69,10 @@ html, body {
   top: 10px;
   left: 10px;
   display: flex;
-  align-items: center;
-  gap: 8px;
-  padding: 6px 8px;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 0;
+  padding: 0 8px;
   color: var(--bar-text);
   accent-color: var(--bar-text);
   background: var(--bar-bg);
@@ -81,9 +82,31 @@ html, body {
   user-select: none;
   -webkit-user-select: none;
   touch-action: manipulation;
-  flex-wrap: wrap;
-  max-width: calc(100vw - 20px);
+  /* Always the full width inside the margins, so it doesn't resize as options appear */
+  width: calc(100vw - 20px);
   box-sizing: border-box;
+}
+
+/* Three rows: brush and canvas, shapes (create modules), effects (affects) */
+.toolbar-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 0;
+}
+
+.toolbar-row + .toolbar-row {
+  border-top: 1px solid var(--bar-border);
+}
+
+.row-label {
+  min-width: 52px;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  opacity: 0.6;
 }
 
 #toolbar button {
@@ -122,11 +145,81 @@ html, body {
 /* Options for an active module, like Alchemy's sub-toolbar */
 .sub {
   display: flex;
+  flex-wrap: wrap;
   gap: 4px;
+}
+
+/*
+ * A button with settings: the settings drop down underneath it while you
+ * hover (or tab into them), and only while the module is on (the panel's
+ * `hidden` attribute is removed). Export's panel ("click") opens on click.
+ */
+.has-options {
+  position: relative;
+  display: inline-flex;
+}
+
+.popover {
+  position: absolute;
+  top: calc(100% + 6px);
+  left: 0;
+  z-index: 10;
+  display: none;
+  align-items: center;
+  gap: 6px;
+  width: max-content;
+  max-width: calc(100vw - 40px);
+  padding: 6px 8px;
+  background: var(--bar-bg);
+  border: 1px solid var(--bar-border);
+  border-radius: 6px;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.18);
+}
+
+/* An invisible bridge so the panel stays open while the pointer moves down to it */
+.popover::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: -8px;
+  height: 8px;
+}
+
+.popover.align-right {
+  left: auto;
+  right: 0;
+}
+
+.has-options:hover > .popover:not([hidden]),
+.has-options:has(:focus-visible) > .popover:not([hidden]),
+.popover.click:not([hidden]) {
+  display: flex;
+}
+
+/* A small arrow on buttons whose settings are available */
+.has-options:has(> .popover:not([hidden]):not(.click)) > button::after {
+  content: " \25BE";
+  opacity: 0.7;
 }
 
 .sub[hidden] {
   display: none;
+}
+
+/*
+ * The Shapes buttons are grouped for screen readers, but laid out as if they
+ * were items of the row itself, so they wrap one by one after the row label
+ * like the Effects buttons instead of dropping below it as a block.
+ */
+.inline-group {
+  display: contents;
+}
+
+/* Groups of everyday controls (brush, background) keep the toolbar's spacing */
+.sub.group {
+  gap: 8px;
+  align-items: center;
 }
 
 #toolbar .sub button {

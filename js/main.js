@@ -570,6 +570,30 @@
   affectToggle('displace', Alchemy.modules.displace, 'displace-options');
   slider('displace-amount', function (v) { Alchemy.modules.displace.displacement = v; });
 
+  // Settings panels under buttons: open leftwards if they'd run off the right edge
+  Array.prototype.forEach.call(document.querySelectorAll('.has-options'), function (wrap) {
+    var panel = wrap.querySelector('.popover');
+    if (!panel) return;
+    function place() {
+      panel.classList.remove('align-right');
+      var right = wrap.getBoundingClientRect().left + panel.offsetWidth;
+      if (right > window.innerWidth - 10) panel.classList.add('align-right');
+    }
+    wrap.addEventListener('pointerenter', place);
+    wrap.addEventListener('focusin', place);
+    if (panel.classList.contains('click')) exportButton.addEventListener('click', place);
+  });
+
+  // Pressing on the canvas closes any open settings panel: drop focus from the
+  // toolbar (a focused field keeps its panel open) and close Export.
+  canvas.el.addEventListener('pointerdown', function () {
+    var active = document.activeElement;
+    if (active && active !== document.body && document.getElementById('toolbar').contains(active)) {
+      active.blur();
+    }
+    if (!exportOptions.hidden) showExport(false);
+  });
+
   // Keyboard shortcuts: S toggles style, Backspace/Delete clears, Esc cancels axis select
   window.addEventListener('keydown', function (e) {
     if (e.key === 'Escape' && mirror.selectingAxis) {

@@ -15,294 +15,352 @@
   <canvas id="canvas"></canvas>
 
   <div id="toolbar" role="toolbar" aria-label="Drawing tools">
-    <div class="sub" role="group" aria-label="Create module">
-      <button class="create-module" data-module="shapes" type="button" aria-pressed="true" title="Shapes: freehand lines and shapes">Shapes</button>
-      <button class="create-module" data-module="splatter" type="button" aria-pressed="false" title="Splatter: paint splats and drips, fatter when you move slowly">Splatter</button>
-      <button class="create-module" data-module="speed" type="button" aria-pressed="false" title="Speed: fast movement flings the line out ahead of the pen">Speed</button>
-      <button class="create-module" data-module="scrawl" type="button" aria-pressed="false" title="Scrawl: a jittery, scribbly line">Scrawl</button>
-      <button class="create-module" data-module="inverse" type="button" aria-pressed="false" title="Inverse: draws while the button is up (move the mouse or hover the pen); press to end a shape">Inverse</button>
-      <button class="create-module" data-module="detach" type="button" aria-pressed="false" title="Detach: the line trails behind the pen on a leash">Detach</button>
-      <button class="create-module" data-module="xshapes" type="button" aria-pressed="false" title="X Shapes: a zig-zag fan that sprays out to one side of your stroke">X Shapes</button>
-      <button class="create-module" data-module="median" type="button" aria-pressed="false" title="Median: each stroke also draws a line halfway to the previous stroke">Median</button>
-      <button class="create-module" data-module="pressure" type="button" aria-pressed="false" title="Pressure: a stroke that swells and thins with pen pressure (best in Solid style)">Pressure</button>
-      <button class="create-module" data-module="ribbon" type="button" aria-pressed="false" title="Ribbon: flowing, twisting ribbons that sag with gravity">Ribbon</button>
-      <button class="create-module" data-module="type" type="button" aria-pressed="false" title="Type: shapes made from distorted letters (Space makes an abstract shape)">Type</button>
-      <button class="create-module" data-module="pull" type="button" aria-pressed="false" title="Pull: stamp random shapes from a library">Pull</button>
-      <button class="create-module" data-module="evolve" type="button" aria-pressed="false" title="Evolve: stamp shapes bred with a genetic algorithm (open the Evolver to rank and evolve them)">Evolve</button>
-      <button class="create-module" data-module="trace" type="button" aria-pressed="false" title="Trace: a line that snaps to edges in a photo you can keep hidden">Trace</button>
-      <button class="create-module" data-module="mic" type="button" aria-pressed="false" title="Mic: your voice fattens or shakes the line (uses the microphone)">Mic</button>
-      <button class="create-module" data-module="pitch" type="button" aria-pressed="false" title="Pitch: low notes draw thick, high notes thin (uses the microphone; best in Solid style)">Pitch</button>
-    </div>
-    <div id="pitch-options" class="sub" hidden>
-      <span class="tool" title="The pitch being heard">
-        <span>Pitch</span>
-        <output id="pitch-current">–</output>
+    <div class="toolbar-row" role="group" aria-label="Brush and canvas">
+      <div class="sub group" role="group" aria-label="Brush">
+        <button id="style" type="button" title="Line or solid style (S)">Line</button>
+        <label class="tool" title="Colour">
+          <span class="visually-hidden">Colour</span>
+          <input id="color" type="color">
+        </label>
+        <label class="tool weight" title="Line weight">
+          <span>Weight</span>
+          <input id="weight" type="range" min="1" max="50" step="1">
+          <output id="weight-value">1</output>
+        </label>
+        <label class="tool" title="Brush opacity for new strokes">
+          <span>Opacity</span>
+          <input id="opacity" type="range" min="1" max="100" step="1" value="100">
+          <output id="opacity-value">100%</output>
+        </label>
+      </div>
+
+      <span class="separator" aria-hidden="true"></span>
+
+      <div class="sub group" role="group" aria-label="Background">
+        <label class="tool" title="Background colour of the canvas">
+          <span>Background</span>
+          <input id="bg-color" type="color" value="#ffffff">
+        </label>
+        <button id="bg-image" type="button" title="Load a background image to draw over (JPG, PNG, GIF…)">Image…</button>
+        <button id="bg-image-remove" type="button" title="Remove the background image" hidden>Remove image</button>
+        <input id="bg-image-file" type="file" accept="image/*" hidden>
+      </div>
+
+      <span class="separator" aria-hidden="true"></span>
+
+      <button id="clear" type="button" title="Clear the canvas (Backspace)">Clear</button>
+      <span class="has-options">
+        <button id="export" type="button" aria-pressed="false" aria-controls="export-options" title="Export the canvas as an image">Export</button>
+        <div id="export-options" class="sub popover click" hidden>
+          <button id="export-png" type="button" title="PNG image with the background, at full screen resolution">PNG</button>
+          <button id="export-png-clear" type="button" title="PNG image with a transparent background">PNG, transparent</button>
+          <button id="export-svg" type="button" title="SVG vector file, for Inkscape, Illustrator or a browser">SVG</button>
+        </div>
       </span>
-      <label class="tool" title="Pitches at or below this draw the thickest line">
-        <span>Lower</span>
-        <input id="pitch-min" type="range" min="50" max="1800" step="1" value="50">
-        <output for="pitch-min">50</output>
-      </label>
-      <label class="tool" title="Pitches at or above this draw the thinnest line">
-        <span>Upper</span>
-        <input id="pitch-max" type="range" min="50" max="1800" step="1" value="1800">
-        <output for="pitch-max">1800</output>
-      </label>
-    </div>
-    <div id="mic-options" class="sub" hidden>
-      <button id="mic-mode" type="button" title="Switch between fatten and shake mode">Fatten</button>
-      <label class="tool" title="How strongly the sound affects the line">
-        <span>Volume</span>
-        <input id="mic-volume" type="range" min="0" max="100" step="1" value="50">
-        <output for="mic-volume">50</output>
-      </label>
-    </div>
-    <div id="trace-options" class="sub" hidden>
-      <button id="trace-load" type="button" title="Load a photo to trace (otherwise the background image is used)">Load Image…</button>
-      <button id="trace-display" type="button" aria-pressed="false" title="Show or hide the photo being traced">Display Image</button>
-      <label class="tool" title="How far a point can snap, in pixels">
-        <span>Snap</span>
-        <input id="trace-snap" type="range" min="1" max="100" step="1" value="30">
-        <output for="trace-snap">30</output>
-      </label>
-      <label class="tool" title="How much brighter or darker a pixel must be to snap to it">
-        <span>Tolerance</span>
-        <input id="trace-tolerance" type="range" min="0" max="200" step="1" value="100">
-        <output for="trace-tolerance">100</output>
-      </label>
-      <input id="trace-file" type="file" accept="image/*" hidden>
-    </div>
-    <div id="pull-options" class="sub" hidden>
-      <label class="tool" title="Which group of shapes to use">
-        <span class="visually-hidden">Shape group</span>
-        <select id="pull-group"></select>
-      </label>
-      <button id="pull-load" type="button" title="Add shapes from SVG files to a 'My Shapes' group">Load SVG…</button>
-      <label class="tool" title="Time between shapes (higher is slower)">
-        <span>Spacing</span>
-        <input id="pull-spacing" type="range" min="0" max="100" step="1" value="25">
-        <output for="pull-spacing">25</output>
-      </label>
-      <label class="tool" title="The largest size shapes can be scaled to">
-        <span>Size</span>
-        <input id="pull-size" type="range" min="1" max="50" step="1" value="19">
-        <output for="pull-size">19</output>
-      </label>
-      <button id="pull-rotate" type="button" aria-pressed="true" title="Rotate each shape to a random angle">Rotate</button>
-    </div>
-    <div id="evolve-options" class="sub" hidden>
-      <button id="evolve-open" type="button" title="Rank and evolve the shapes with a genetic algorithm">Evolver…</button>
-      <label class="tool" title="Time between shapes (higher is slower)">
-        <span>Spacing</span>
-        <input id="evolve-spacing" type="range" min="0" max="100" step="1" value="25">
-        <output for="evolve-spacing">25</output>
-      </label>
-    </div>
-    <input id="svg-file" type="file" accept=".svg,image/svg+xml" multiple hidden>
-    <div id="ribbon-options" class="sub" hidden>
-      <label class="tool" title="The ribbon size">
-        <span>Size</span>
-        <input id="ribbon-size" type="number" min="1" max="100" step="1" value="50">
-      </label>
-      <label class="tool" title="Milliseconds between ribbon pieces">
-        <span>Spacing</span>
-        <input id="ribbon-spacing" type="number" min="1" max="100" step="1" value="25">
-      </label>
-      <label class="tool" title="Ribbon friction (above 100 the ribbon speeds up)">
-        <span>Friction</span>
-        <input id="ribbon-friction" type="range" min="1" max="200" step="1" value="110">
-        <output for="ribbon-friction">110</output>
-      </label>
-      <label class="tool" title="Ribbon gravity">
-        <span>Gravity</span>
-        <input id="ribbon-gravity" type="range" min="0" max="200" step="1" value="15">
-        <output for="ribbon-gravity">15</output>
-      </label>
-    </div>
-    <div id="type-options" class="sub" hidden>
-      <label class="tool" title="How much the letters get distorted">
-        <span>Distortion</span>
-        <input id="type-distortion" type="range" min="0" max="100" step="1" value="50">
-        <output for="type-distortion">50</output>
-      </label>
-      <button id="type-generate" type="button" title="Create an abstract shape from merged letters (Space)">Auto-generate</button>
-      <label class="tool" title="The size of the letters you stamp">
-        <span>Size</span>
-        <input id="type-size" type="range" min="1" max="50" step="1" value="24">
-        <output for="type-size">24</output>
-      </label>
-      <button id="type-keys" type="button" aria-pressed="false" title="Type on the keyboard to stamp letters (takes over the S, R and B shortcuts)">Key Drawing</button>
-    </div>
-    <div id="pressure-options" class="sub" hidden>
-      <label class="tool" title="How wide full pen pressure makes the stroke, on each side">
-        <span>Pressure</span>
-        <input id="pressure-amount" type="number" min="1" max="200" step="1" value="25">
-      </label>
-    </div>
-    <div id="xshapes-options" class="sub" hidden>
-      <label class="tool" title="How far the zig-zag sprays out">
-        <span>Distance</span>
-        <input id="xshapes-distance" type="range" min="0" max="100" step="1" value="50">
-        <output for="xshapes-distance">50</output>
-      </label>
-    </div>
-    <div id="detach-options" class="sub" hidden>
-      <label class="tool" title="How far behind the pen the line trails, in pixels">
-        <span>Distance</span>
-        <input id="detach-distance" type="range" min="0" max="300" step="1" value="100">
-        <output for="detach-distance">100</output>
-      </label>
-    </div>
-    <div id="speed-options" class="sub" hidden>
-      <button id="speed-linetype" type="button" title="Change the line type to curved or straight">Curved</button>
-      <label class="tool" title="How much cursor movement is sped up by">
-        <span>Speed</span>
-        <input id="speed-multiplier" type="range" min="0" max="35" step="1" value="15">
-        <output for="speed-multiplier">15</output>
-      </label>
-    </div>
-    <div id="scrawl-options" class="sub" hidden>
-      <label class="tool" title="Flow: draw a new scrawl every N pen moves (higher is longer, looser segments)">
-        <span>Flow</span>
-        <input id="scrawl-flow" type="range" min="1" max="25" step="1" value="10">
-        <output for="scrawl-flow">10</output>
-      </label>
-      <label class="tool" title="Detail: how many wobbly steps each segment is split into">
-        <span>Detail</span>
-        <input id="scrawl-detail" type="range" min="2" max="50" step="1" value="10">
-        <output for="scrawl-detail">10</output>
-      </label>
-      <label class="tool" title="Noise: how far each step can wander, in pixels">
-        <span>Noise</span>
-        <input id="scrawl-noise" type="range" min="1" max="50" step="1" value="10">
-        <output for="scrawl-noise">10</output>
-      </label>
-    </div>
-    <div id="splatter-options" class="sub" hidden>
-      <label class="tool" title="The size of the splatter">
-        <span>Size</span>
-        <input id="splatter-size" type="number" min="1" max="100" step="1" value="50">
-      </label>
-      <label class="tool" title="The number of drips">
-        <span>Drips</span>
-        <input id="splatter-drips" type="number" min="0" max="50" step="1" value="10">
-      </label>
+
+      <div class="sub" role="group" aria-label="Flip">
+        <button id="flip-h" type="button" title="Flip the drawing left to right">Flip H</button>
+        <button id="flip-v" type="button" title="Flip the drawing top to bottom">Flip V</button>
+      </div>
     </div>
 
-    <span class="separator" aria-hidden="true"></span>
-
-    <button id="style" type="button" title="Line or solid style (S)">Line</button>
-    <label class="tool" title="Colour">
-      <span class="visually-hidden">Colour</span>
-      <input id="color" type="color">
-    </label>
-    <label class="tool weight" title="Line weight">
-      <span>Weight</span>
-      <input id="weight" type="range" min="1" max="50" step="1">
-      <output id="weight-value">1</output>
-    </label>
-    <label class="tool" title="Brush opacity for new strokes">
-      <span>Opacity</span>
-      <input id="opacity" type="range" min="1" max="100" step="1" value="100">
-      <output id="opacity-value">100%</output>
-    </label>
-    <label class="tool" title="Background colour of the canvas">
-      <span>Background</span>
-      <input id="bg-color" type="color" value="#ffffff">
-    </label>
-    <button id="clear" type="button" title="Clear the canvas (Backspace)">Clear</button>
-    <button id="export" type="button" aria-pressed="false" aria-controls="export-options" title="Export the canvas as an image">Export</button>
-    <div id="export-options" class="sub" hidden>
-      <button id="export-png" type="button" title="PNG image with the background, at full screen resolution">PNG</button>
-      <button id="export-png-clear" type="button" title="PNG image with a transparent background">PNG, transparent</button>
-      <button id="export-svg" type="button" title="SVG vector file, for Inkscape, Illustrator or a browser">SVG</button>
+    <div class="toolbar-row" role="group" aria-label="Shapes">
+      <span class="row-label">Shapes</span>
+      <div class="sub inline-group" role="group" aria-label="Create module">
+        <button class="create-module" data-module="shapes" type="button" aria-pressed="true" title="Shapes: freehand lines and shapes">Shapes</button>
+        <span class="has-options">
+          <button class="create-module" data-module="splatter" type="button" aria-pressed="false" title="Splatter: paint splats and drips, fatter when you move slowly">Splatter</button>
+          <div id="splatter-options" class="sub popover" hidden>
+            <label class="tool" title="The size of the splatter">
+              <span>Size</span>
+              <input id="splatter-size" type="number" min="1" max="100" step="1" value="50">
+            </label>
+            <label class="tool" title="The number of drips">
+              <span>Drips</span>
+              <input id="splatter-drips" type="number" min="0" max="50" step="1" value="10">
+            </label>
+          </div>
+        </span>
+        <span class="has-options">
+          <button class="create-module" data-module="speed" type="button" aria-pressed="false" title="Speed: fast movement flings the line out ahead of the pen">Speed</button>
+          <div id="speed-options" class="sub popover" hidden>
+            <button id="speed-linetype" type="button" title="Change the line type to curved or straight">Curved</button>
+            <label class="tool" title="How much cursor movement is sped up by">
+              <span>Speed</span>
+              <input id="speed-multiplier" type="range" min="0" max="35" step="1" value="15">
+              <output for="speed-multiplier">15</output>
+            </label>
+          </div>
+        </span>
+        <span class="has-options">
+          <button class="create-module" data-module="scrawl" type="button" aria-pressed="false" title="Scrawl: a jittery, scribbly line">Scrawl</button>
+          <div id="scrawl-options" class="sub popover" hidden>
+            <label class="tool" title="Flow: draw a new scrawl every N pen moves (higher is longer, looser segments)">
+              <span>Flow</span>
+              <input id="scrawl-flow" type="range" min="1" max="25" step="1" value="10">
+              <output for="scrawl-flow">10</output>
+            </label>
+            <label class="tool" title="Detail: how many wobbly steps each segment is split into">
+              <span>Detail</span>
+              <input id="scrawl-detail" type="range" min="2" max="50" step="1" value="10">
+              <output for="scrawl-detail">10</output>
+            </label>
+            <label class="tool" title="Noise: how far each step can wander, in pixels">
+              <span>Noise</span>
+              <input id="scrawl-noise" type="range" min="1" max="50" step="1" value="10">
+              <output for="scrawl-noise">10</output>
+            </label>
+          </div>
+        </span>
+        <button class="create-module" data-module="inverse" type="button" aria-pressed="false" title="Inverse: draws while the button is up (move the mouse or hover the pen); press to end a shape">Inverse</button>
+        <span class="has-options">
+          <button class="create-module" data-module="detach" type="button" aria-pressed="false" title="Detach: the line trails behind the pen on a leash">Detach</button>
+          <div id="detach-options" class="sub popover" hidden>
+            <label class="tool" title="How far behind the pen the line trails, in pixels">
+              <span>Distance</span>
+              <input id="detach-distance" type="range" min="0" max="300" step="1" value="100">
+              <output for="detach-distance">100</output>
+            </label>
+          </div>
+        </span>
+        <span class="has-options">
+          <button class="create-module" data-module="xshapes" type="button" aria-pressed="false" title="X Shapes: a zig-zag fan that sprays out to one side of your stroke">X Shapes</button>
+          <div id="xshapes-options" class="sub popover" hidden>
+            <label class="tool" title="How far the zig-zag sprays out">
+              <span>Distance</span>
+              <input id="xshapes-distance" type="range" min="0" max="100" step="1" value="50">
+              <output for="xshapes-distance">50</output>
+            </label>
+          </div>
+        </span>
+        <button class="create-module" data-module="median" type="button" aria-pressed="false" title="Median: each stroke also draws a line halfway to the previous stroke">Median</button>
+        <span class="has-options">
+          <button class="create-module" data-module="pressure" type="button" aria-pressed="false" title="Pressure: a stroke that swells and thins with pen pressure (best in Solid style)">Pressure</button>
+          <div id="pressure-options" class="sub popover" hidden>
+            <label class="tool" title="How wide full pen pressure makes the stroke, on each side">
+              <span>Pressure</span>
+              <input id="pressure-amount" type="number" min="1" max="200" step="1" value="25">
+            </label>
+          </div>
+        </span>
+        <span class="has-options">
+          <button class="create-module" data-module="ribbon" type="button" aria-pressed="false" title="Ribbon: flowing, twisting ribbons that sag with gravity">Ribbon</button>
+          <div id="ribbon-options" class="sub popover" hidden>
+            <label class="tool" title="The ribbon size">
+              <span>Size</span>
+              <input id="ribbon-size" type="number" min="1" max="100" step="1" value="50">
+            </label>
+            <label class="tool" title="Milliseconds between ribbon pieces">
+              <span>Spacing</span>
+              <input id="ribbon-spacing" type="number" min="1" max="100" step="1" value="25">
+            </label>
+            <label class="tool" title="Ribbon friction (above 100 the ribbon speeds up)">
+              <span>Friction</span>
+              <input id="ribbon-friction" type="range" min="1" max="200" step="1" value="110">
+              <output for="ribbon-friction">110</output>
+            </label>
+            <label class="tool" title="Ribbon gravity">
+              <span>Gravity</span>
+              <input id="ribbon-gravity" type="range" min="0" max="200" step="1" value="15">
+              <output for="ribbon-gravity">15</output>
+            </label>
+          </div>
+        </span>
+        <span class="has-options">
+          <button class="create-module" data-module="type" type="button" aria-pressed="false" title="Type: shapes made from distorted letters (Space makes an abstract shape)">Type</button>
+          <div id="type-options" class="sub popover" hidden>
+            <label class="tool" title="How much the letters get distorted">
+              <span>Distortion</span>
+              <input id="type-distortion" type="range" min="0" max="100" step="1" value="50">
+              <output for="type-distortion">50</output>
+            </label>
+            <button id="type-generate" type="button" title="Create an abstract shape from merged letters (Space)">Auto-generate</button>
+            <label class="tool" title="The size of the letters you stamp">
+              <span>Size</span>
+              <input id="type-size" type="range" min="1" max="50" step="1" value="24">
+              <output for="type-size">24</output>
+            </label>
+            <button id="type-keys" type="button" aria-pressed="false" title="Type on the keyboard to stamp letters (takes over the S, R and B shortcuts)">Key Drawing</button>
+          </div>
+        </span>
+        <span class="has-options">
+          <button class="create-module" data-module="pull" type="button" aria-pressed="false" title="Pull: stamp random shapes from a library">Pull</button>
+          <div id="pull-options" class="sub popover" hidden>
+            <label class="tool" title="Which group of shapes to use">
+              <span class="visually-hidden">Shape group</span>
+              <select id="pull-group"></select>
+            </label>
+            <button id="pull-load" type="button" title="Add shapes from SVG files to a 'My Shapes' group">Load SVG…</button>
+            <label class="tool" title="Time between shapes (higher is slower)">
+              <span>Spacing</span>
+              <input id="pull-spacing" type="range" min="0" max="100" step="1" value="25">
+              <output for="pull-spacing">25</output>
+            </label>
+            <label class="tool" title="The largest size shapes can be scaled to">
+              <span>Size</span>
+              <input id="pull-size" type="range" min="1" max="50" step="1" value="19">
+              <output for="pull-size">19</output>
+            </label>
+            <button id="pull-rotate" type="button" aria-pressed="true" title="Rotate each shape to a random angle">Rotate</button>
+          </div>
+        </span>
+        <span class="has-options">
+          <button class="create-module" data-module="evolve" type="button" aria-pressed="false" title="Evolve: stamp shapes bred with a genetic algorithm (open the Evolver to rank and evolve them)">Evolve</button>
+          <div id="evolve-options" class="sub popover" hidden>
+            <button id="evolve-open" type="button" title="Rank and evolve the shapes with a genetic algorithm">Evolver…</button>
+            <label class="tool" title="Time between shapes (higher is slower)">
+              <span>Spacing</span>
+              <input id="evolve-spacing" type="range" min="0" max="100" step="1" value="25">
+              <output for="evolve-spacing">25</output>
+            </label>
+          </div>
+        </span>
+        <span class="has-options">
+          <button class="create-module" data-module="trace" type="button" aria-pressed="false" title="Trace: a line that snaps to edges in a photo you can keep hidden">Trace</button>
+          <div id="trace-options" class="sub popover" hidden>
+            <button id="trace-load" type="button" title="Load a photo to trace (otherwise the background image is used)">Load Image…</button>
+            <button id="trace-display" type="button" aria-pressed="false" title="Show or hide the photo being traced">Display Image</button>
+            <label class="tool" title="How far a point can snap, in pixels">
+              <span>Snap</span>
+              <input id="trace-snap" type="range" min="1" max="100" step="1" value="30">
+              <output for="trace-snap">30</output>
+            </label>
+            <label class="tool" title="How much brighter or darker a pixel must be to snap to it">
+              <span>Tolerance</span>
+              <input id="trace-tolerance" type="range" min="0" max="200" step="1" value="100">
+              <output for="trace-tolerance">100</output>
+            </label>
+            <input id="trace-file" type="file" accept="image/*" hidden>
+          </div>
+        </span>
+        <span class="has-options">
+          <button class="create-module" data-module="mic" type="button" aria-pressed="false" title="Mic: your voice fattens or shakes the line (uses the microphone)">Mic</button>
+          <div id="mic-options" class="sub popover" hidden>
+            <button id="mic-mode" type="button" title="Switch between fatten and shake mode">Fatten</button>
+            <label class="tool" title="How strongly the sound affects the line">
+              <span>Volume</span>
+              <input id="mic-volume" type="range" min="0" max="100" step="1" value="50">
+              <output for="mic-volume">50</output>
+            </label>
+          </div>
+        </span>
+        <span class="has-options">
+          <button class="create-module" data-module="pitch" type="button" aria-pressed="false" title="Pitch: low notes draw thick, high notes thin (uses the microphone; best in Solid style)">Pitch</button>
+          <div id="pitch-options" class="sub popover" hidden>
+            <span class="tool" title="The pitch being heard">
+              <span>Pitch</span>
+              <output id="pitch-current">–</output>
+            </span>
+            <label class="tool" title="Pitches at or below this draw the thickest line">
+              <span>Lower</span>
+              <input id="pitch-min" type="range" min="50" max="1800" step="1" value="50">
+              <output for="pitch-min">50</output>
+            </label>
+            <label class="tool" title="Pitches at or above this draw the thinnest line">
+              <span>Upper</span>
+              <input id="pitch-max" type="range" min="50" max="1800" step="1" value="1800">
+              <output for="pitch-max">1800</output>
+            </label>
+          </div>
+        </span>
+      </div>
+      <input id="svg-file" type="file" accept=".svg,image/svg+xml" multiple hidden>
     </div>
 
-    <span class="separator" aria-hidden="true"></span>
-
-    <div class="sub" role="group" aria-label="Canvas">
-      <button id="flip-h" type="button" title="Flip the drawing left to right">Flip H</button>
-      <button id="flip-v" type="button" title="Flip the drawing top to bottom">Flip V</button>
-      <button id="bg-image" type="button" title="Load a background image to draw over (JPG, PNG, GIF…)">Image…</button>
-      <button id="bg-image-remove" type="button" title="Remove the background image" hidden>Remove image</button>
-      <input id="bg-image-file" type="file" accept="image/*" hidden>
-    </div>
-
-    <span class="separator" aria-hidden="true"></span>
-
-    <button id="mirror" type="button" aria-pressed="false" title="Mirror affect: draw reflected copies">Mirror</button>
-    <div id="mirror-options" class="sub" hidden>
-      <button id="mirror-h" type="button" aria-pressed="true" title="Reflect left/right across a vertical axis">Horizontal</button>
-      <button id="mirror-v" type="button" aria-pressed="false" title="Reflect top/bottom across a horizontal axis">Vertical</button>
-      <button id="mirror-axis" type="button" aria-pressed="false" title="Click on the canvas to place the mirror axis (Esc cancels)">Set axis</button>
-      <button id="mirror-reset" type="button" title="Move the axis back to the centre of the canvas">Centre</button>
-    </div>
-    <button id="gradient" type="button" aria-pressed="false" title="Gradient affect: fade each shape from its colour to transparent">Gradient</button>
-    <button id="smooth" type="button" aria-pressed="false" title="Smooth affect: hover over a finished shape (without pressing) to round it off">Smooth</button>
-    <div id="smooth-options" class="sub" hidden>
-      <button id="smooth-repeat" type="button" aria-pressed="false" title="Add smoothed copies instead of changing the shape">Repeat</button>
-    </div>
-    <button id="blindness" type="button" aria-pressed="false" title="Blindness affect: draw without seeing; the drawing appears when you reveal it">Blindness</button>
-    <div id="blindness-options" class="sub" hidden>
-      <button id="blindness-reveal" type="button" title="Reveal the screen (R)">Reveal</button>
-      <button id="blindness-auto" type="button" aria-pressed="true" title="Reveal the screen after each shape is drawn">Auto-reveal</button>
-    </div>
-    <button id="colorswitcher" type="button" aria-pressed="false" title="Color Switcher affect: each new stroke gets a new random colour and/or transparency">Color Switcher</button>
-    <div id="colorswitcher-options" class="sub" hidden>
-      <button id="cs-base" type="button" aria-pressed="true" title="Switch colours, wandering around the base colour">Base Color</button>
-      <label class="tool" title="The base colour to wander from">
-        <span class="visually-hidden">Base colour</span>
-        <input id="cs-base-color" type="color">
-      </label>
-      <label class="tool" title="How far the colour can wander from the base">
-        <span>Range</span>
-        <input id="cs-range" type="range" min="0" max="100" step="1" value="50">
-        <output for="cs-range">50</output>
-      </label>
-      <button id="cs-alpha" type="button" aria-pressed="true" title="Switch transparency too">Transparency</button>
-      <button id="cs-constant" type="button" aria-pressed="false" title="Keep switching colours while you draw">Constant</button>
-    </div>
-    <button id="limit" type="button" aria-pressed="false" title="Limit affect: keep only the most recent shapes; older ones disappear">Limit</button>
-    <div id="limit-options" class="sub" hidden>
-      <label class="tool" title="The number of shapes to keep">
-        <span>Number</span>
-        <input id="limit-number" type="number" min="1" max="100" step="1" value="10">
-      </label>
-    </div>
-    <button id="random" type="button" aria-pressed="false" title="Random affect: hover over a finished shape (without pressing) to jiggle its points">Random</button>
-    <div id="random-options" class="sub" hidden>
-      <label class="tool" title="How far points get jiggled">
-        <span>Distortion</span>
-        <input id="random-distortion" type="range" min="1" max="100" step="1" value="50">
-        <output for="random-distortion">50</output>
-      </label>
-    </div>
-    <button id="repeat" type="button" aria-pressed="false" title="Repeat affect: hover over a finished shape (without pressing) and copies follow the pointer">Repeat</button>
-    <div id="repeat-options" class="sub" hidden>
-      <button id="repeat-on" type="button" aria-pressed="true" title="Pause or resume repeating (B)">Repeating</button>
-      <label class="tool" title="Time between copies (higher is slower)">
-        <span>Interval</span>
-        <input id="repeat-interval" type="range" min="0" max="100" step="1" value="50">
-        <output for="repeat-interval">50</output>
-      </label>
-    </div>
-    <button id="shapeswap" type="button" aria-pressed="false" title="Shape Swap affect: your last long stroke comes back after you clear the canvas">Shape Swap</button>
-    <button id="micexpand" type="button" aria-pressed="false" title="Mic Expand affect: hover over a finished shape and make noise to ripple or grow it (uses the microphone)">Mic Expand</button>
-    <div id="micexpand-options" class="sub" hidden>
-      <button id="micexpand-mode" type="button" title="Switch between wave and level mode">Wave</button>
-      <label class="tool" title="How strongly the sound affects the shape">
-        <span>Volume</span>
-        <input id="micexpand-volume" type="range" min="0" max="100" step="1" value="50">
-        <output for="micexpand-volume">50</output>
-      </label>
-    </div>
-    <button id="displace" type="button" aria-pressed="false" title="Displace affect: the shape you draw swells when you move slowly and shrinks when you move fast">Displace</button>
-    <div id="displace-options" class="sub" hidden>
-      <label class="tool" title="Change the amount of displacement">
-        <span>Displacement</span>
-        <input id="displace-amount" type="range" min="1" max="15" step="1" value="7">
-        <output for="displace-amount">7</output>
-      </label>
+    <div class="toolbar-row" role="group" aria-label="Effects">
+      <span class="row-label">Effects</span>
+      <span class="has-options">
+        <button id="mirror" type="button" aria-pressed="false" title="Mirror affect: draw reflected copies">Mirror</button>
+        <div id="mirror-options" class="sub popover" hidden>
+          <button id="mirror-h" type="button" aria-pressed="true" title="Reflect left/right across a vertical axis">Horizontal</button>
+          <button id="mirror-v" type="button" aria-pressed="false" title="Reflect top/bottom across a horizontal axis">Vertical</button>
+          <button id="mirror-axis" type="button" aria-pressed="false" title="Click on the canvas to place the mirror axis (Esc cancels)">Set axis</button>
+          <button id="mirror-reset" type="button" title="Move the axis back to the centre of the canvas">Centre</button>
+        </div>
+      </span>
+      <button id="gradient" type="button" aria-pressed="false" title="Gradient affect: fade each shape from its colour to transparent">Gradient</button>
+      <span class="has-options">
+        <button id="smooth" type="button" aria-pressed="false" title="Smooth affect: hover over a finished shape (without pressing) to round it off">Smooth</button>
+        <div id="smooth-options" class="sub popover" hidden>
+          <button id="smooth-repeat" type="button" aria-pressed="false" title="Add smoothed copies instead of changing the shape">Repeat</button>
+        </div>
+      </span>
+      <span class="has-options">
+        <button id="blindness" type="button" aria-pressed="false" title="Blindness affect: draw without seeing; the drawing appears when you reveal it">Blindness</button>
+        <div id="blindness-options" class="sub popover" hidden>
+          <button id="blindness-reveal" type="button" title="Reveal the screen (R)">Reveal</button>
+          <button id="blindness-auto" type="button" aria-pressed="true" title="Reveal the screen after each shape is drawn">Auto-reveal</button>
+        </div>
+      </span>
+      <span class="has-options">
+        <button id="colorswitcher" type="button" aria-pressed="false" title="Color Switcher affect: each new stroke gets a new random colour and/or transparency">Color Switcher</button>
+        <div id="colorswitcher-options" class="sub popover" hidden>
+          <button id="cs-base" type="button" aria-pressed="true" title="Switch colours, wandering around the base colour">Base Color</button>
+          <label class="tool" title="The base colour to wander from">
+            <span class="visually-hidden">Base colour</span>
+            <input id="cs-base-color" type="color">
+          </label>
+          <label class="tool" title="How far the colour can wander from the base">
+            <span>Range</span>
+            <input id="cs-range" type="range" min="0" max="100" step="1" value="50">
+            <output for="cs-range">50</output>
+          </label>
+          <button id="cs-alpha" type="button" aria-pressed="true" title="Switch transparency too">Transparency</button>
+          <button id="cs-constant" type="button" aria-pressed="false" title="Keep switching colours while you draw">Constant</button>
+        </div>
+      </span>
+      <span class="has-options">
+        <button id="limit" type="button" aria-pressed="false" title="Limit affect: keep only the most recent shapes; older ones disappear">Limit</button>
+        <div id="limit-options" class="sub popover" hidden>
+          <label class="tool" title="The number of shapes to keep">
+            <span>Number</span>
+            <input id="limit-number" type="number" min="1" max="100" step="1" value="10">
+          </label>
+        </div>
+      </span>
+      <span class="has-options">
+        <button id="random" type="button" aria-pressed="false" title="Random affect: hover over a finished shape (without pressing) to jiggle its points">Random</button>
+        <div id="random-options" class="sub popover" hidden>
+          <label class="tool" title="How far points get jiggled">
+            <span>Distortion</span>
+            <input id="random-distortion" type="range" min="1" max="100" step="1" value="50">
+            <output for="random-distortion">50</output>
+          </label>
+        </div>
+      </span>
+      <span class="has-options">
+        <button id="repeat" type="button" aria-pressed="false" title="Repeat affect: hover over a finished shape (without pressing) and copies follow the pointer">Repeat</button>
+        <div id="repeat-options" class="sub popover" hidden>
+          <button id="repeat-on" type="button" aria-pressed="true" title="Pause or resume repeating (B)">Repeating</button>
+          <label class="tool" title="Time between copies (higher is slower)">
+            <span>Interval</span>
+            <input id="repeat-interval" type="range" min="0" max="100" step="1" value="50">
+            <output for="repeat-interval">50</output>
+          </label>
+        </div>
+      </span>
+      <button id="shapeswap" type="button" aria-pressed="false" title="Shape Swap affect: your last long stroke comes back after you clear the canvas">Shape Swap</button>
+      <span class="has-options">
+        <button id="micexpand" type="button" aria-pressed="false" title="Mic Expand affect: hover over a finished shape and make noise to ripple or grow it (uses the microphone)">Mic Expand</button>
+        <div id="micexpand-options" class="sub popover" hidden>
+          <button id="micexpand-mode" type="button" title="Switch between wave and level mode">Wave</button>
+          <label class="tool" title="How strongly the sound affects the shape">
+            <span>Volume</span>
+            <input id="micexpand-volume" type="range" min="0" max="100" step="1" value="50">
+            <output for="micexpand-volume">50</output>
+          </label>
+        </div>
+      </span>
+      <span class="has-options">
+        <button id="displace" type="button" aria-pressed="false" title="Displace affect: the shape you draw swells when you move slowly and shrinks when you move fast">Displace</button>
+        <div id="displace-options" class="sub popover" hidden>
+          <label class="tool" title="Change the amount of displacement">
+            <span>Displacement</span>
+            <input id="displace-amount" type="range" min="1" max="15" step="1" value="7">
+            <output for="displace-amount">7</output>
+          </label>
+        </div>
+      </span>
     </div>
   </div>
 
