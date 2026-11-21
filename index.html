@@ -30,6 +30,15 @@
       <button class="create-module" data-module="pull" type="button" aria-pressed="false" title="Pull: stamp random shapes from a library">Pull</button>
       <button class="create-module" data-module="evolve" type="button" aria-pressed="false" title="Evolve: stamp shapes bred with a genetic algorithm (open the Evolver to rank and evolve them)">Evolve</button>
       <button class="create-module" data-module="trace" type="button" aria-pressed="false" title="Trace: a line that snaps to edges in a photo you can keep hidden">Trace</button>
+      <button class="create-module" data-module="mic" type="button" aria-pressed="false" title="Mic: your voice fattens or shakes the line (uses the microphone)">Mic</button>
+    </div>
+    <div id="mic-options" class="sub" hidden>
+      <button id="mic-mode" type="button" title="Switch between fatten and shake mode">Fatten</button>
+      <label class="tool" title="How strongly the sound affects the line">
+        <span>Volume</span>
+        <input id="mic-volume" type="range" min="0" max="100" step="1" value="50">
+        <output for="mic-volume">50</output>
+      </label>
     </div>
     <div id="trace-options" class="sub" hidden>
       <button id="trace-load" type="button" title="Load a photo to trace (otherwise the background image is used)">Load Image…</button>
@@ -261,6 +270,15 @@
       </label>
     </div>
     <button id="shapeswap" type="button" aria-pressed="false" title="Shape Swap affect: your last long stroke comes back after you clear the canvas">Shape Swap</button>
+    <button id="micexpand" type="button" aria-pressed="false" title="Mic Expand affect: hover over a finished shape and make noise to ripple or grow it (uses the microphone)">Mic Expand</button>
+    <div id="micexpand-options" class="sub" hidden>
+      <button id="micexpand-mode" type="button" title="Switch between wave and level mode">Wave</button>
+      <label class="tool" title="How strongly the sound affects the shape">
+        <span>Volume</span>
+        <input id="micexpand-volume" type="range" min="0" max="100" step="1" value="50">
+        <output for="micexpand-volume">50</output>
+      </label>
+    </div>
     <button id="displace" type="button" aria-pressed="false" title="Displace affect: the shape you draw swells when you move slowly and shrinks when you move fast">Displace</button>
     <div id="displace-options" class="sub" hidden>
       <label class="tool" title="Change the amount of displacement">
@@ -309,6 +327,9 @@
   <script src="js/modules/pull.js"></script>
   <script src="js/modules/evolve.js"></script>
   <script src="js/modules/trace.js"></script>
+  <script src="js/microphone.js"></script>
+  <script src="js/modules/mic.js"></script>
+  <script src="js/modules/micexpand.js"></script>
   <script src="js/modules/shapeswap.js"></script>
   <script src="js/modules/blindness.js"></script>
   <script src="js/modules/colorswitcher.js"></script>

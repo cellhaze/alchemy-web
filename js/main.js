@@ -31,7 +31,8 @@
     type: document.getElementById('type-options'),
     pull: document.getElementById('pull-options'),
     evolve: document.getElementById('evolve-options'),
-    trace: document.getElementById('trace-options')
+    trace: document.getElementById('trace-options'),
+    mic: document.getElementById('mic-options')
   };
   function selectCreate(id) {
     canvas.setCreateModule(Alchemy.modules[id]);
@@ -275,6 +276,15 @@
   });
   slider('trace-snap', function (v) { trace.snap = v; });
   slider('trace-tolerance', function (v) { trace.tolerance = v; });
+
+  // Mic options
+  var micMod = Alchemy.modules.mic;
+  var micMode = document.getElementById('mic-mode');
+  micMode.addEventListener('click', function () {
+    micMod.shake = !micMod.shake;
+    micMode.textContent = micMod.shake ? 'Shake' : 'Fatten';
+  });
+  slider('mic-volume', function (v) { micMod.volume = v * 0.02; });
 
   // Pressure options
   var pressureAmount = document.getElementById('pressure-amount');
@@ -534,6 +544,16 @@
   }
   repeatOn.addEventListener('click', toggleRepeating);
   slider('repeat-interval', function (v) { repeatMod.interval = v; });
+
+  // Mic Expand affect
+  var micExpand = Alchemy.modules.micexpand;
+  affectToggle('micexpand', micExpand, 'micexpand-options');
+  var micExpandMode = document.getElementById('micexpand-mode');
+  micExpandMode.addEventListener('click', function () {
+    micExpand.wave = !micExpand.wave;
+    micExpandMode.textContent = micExpand.wave ? 'Wave' : 'Level';
+  });
+  slider('micexpand-volume', function (v) { micExpand.volume = v; });
 
   // Shape Swap affect
   affectToggle('shapeswap', Alchemy.modules.shapeswap);
