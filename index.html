@@ -162,6 +162,23 @@
         <input id="limit-number" type="number" min="1" max="100" step="1" value="10">
       </label>
     </div>
+    <button id="random" type="button" aria-pressed="false" title="Random affect: hover over a finished shape (without pressing) to jiggle its points">Random</button>
+    <div id="random-options" class="sub" hidden>
+      <label class="tool" title="How far points get jiggled">
+        <span>Distortion</span>
+        <input id="random-distortion" type="range" min="1" max="100" step="1" value="50">
+        <output for="random-distortion">50</output>
+      </label>
+    </div>
+    <button id="repeat" type="button" aria-pressed="false" title="Repeat affect: hover over a finished shape (without pressing) and copies follow the pointer">Repeat</button>
+    <div id="repeat-options" class="sub" hidden>
+      <button id="repeat-on" type="button" aria-pressed="true" title="Pause or resume repeating (B)">Repeating</button>
+      <label class="tool" title="Time between copies (higher is slower)">
+        <span>Interval</span>
+        <input id="repeat-interval" type="range" min="0" max="100" step="1" value="50">
+        <output for="repeat-interval">50</output>
+      </label>
+    </div>
     <button id="displace" type="button" aria-pressed="false" title="Displace affect: the shape you draw swells when you move slowly and shrinks when you move fast">Displace</button>
     <div id="displace-options" class="sub" hidden>
       <label class="tool" title="Change the amount of displacement">
@@ -187,6 +204,8 @@
   <script src="js/modules/blindness.js"></script>
   <script src="js/modules/colorswitcher.js"></script>
   <script src="js/modules/limit.js"></script>
+  <script src="js/modules/random.js"></script>
+  <script src="js/modules/repeat.js"></script>
   <script src="js/modules/mirror.js"></script>
   <script src="js/modules/gradient.js"></script>
   <script src="js/modules/smooth.js"></script>

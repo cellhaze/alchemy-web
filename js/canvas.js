@@ -115,6 +115,17 @@
     this._renderBuffer();
   };
 
+  /** Save only the affect shapes (e.g. Repeat's trail), like AlcCanvas.commitAffectShapes. */
+  Canvas.prototype.commitAffectShapes = function () {
+    var added = this.affectShapes.slice();
+    this._withScale(this.bufferCtx, function (ctx) {
+      for (var i = 0; i < added.length; i++) added[i].draw(ctx);
+    });
+    Array.prototype.push.apply(this.shapes, added);
+    this.affectShapes.length = 0;
+    this.redraw();
+  };
+
   /** Turn screen updates on or off (AlcCanvas.setRedraw). */
   Canvas.prototype.setRedraw = function (on) {
     this.redrawEnabled = on;

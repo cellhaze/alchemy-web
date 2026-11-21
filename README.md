@@ -14,7 +14,8 @@ Open `index.html` in a browser. No server or build step is needed. Pointer event
 used throughout, so mouse, pen tablet and touch all draw.
 
 Shortcuts: **S** toggles line/solid, **Backspace** or **Delete** clears, **Esc** cancels
-picking a mirror axis, **R** reveals the drawing while Blindness is on.
+picking a mirror axis, **R** reveals the drawing while Blindness is on, **B** pauses and
+resumes Repeat.
 
 **Mirror** draws reflected copies as you draw. Horizontal flips left/right, Vertical flips
 top/bottom, and both together give four-way symmetry. **Set axis** shows a cyan crosshair;
@@ -73,6 +74,16 @@ red it drifts toward orange and yellow, not toward purple.
 **Limit** (affect) keeps only the most recent **Number** shapes (default 10); older ones
 disappear as you draw. Strokes in progress and mirror copies count too. Turning it off
 doesn't bring removed shapes back.
+
+**Random** (affect) jiggles finished shapes: hover inside one without pressing, and the
+points near the pointer move at random on every move, by up to **Distortion** × 0.15 px.
+As in the desktop client, "near" means the point's x *or* y is within 5 px of the pointer,
+so it disturbs a cross through the pointer rather than a small circle.
+
+**Repeat** (affect) makes copies of a finished shape follow the pointer while you hover
+over it (no pressing), one every **Interval** × 2 + 50 ms. The trail is saved when you move
+off the shape or press. **Repeating**/**Paused** (or the **B** key) pauses and resumes it.
+It uses the shape's bounding box, so it's easier to hit than Smooth or Random.
 
 **Gradient** (affect) fades each shape from its colour to transparent, from where the
 stroke starts to where it ends.
@@ -134,6 +145,8 @@ original Alchemy could also export PDF; that would need a library, so it isn't i
 | `js/modules/blindness.js` | `affect/Blindness.java` | The Blindness affect module |
 | `js/modules/colorswitcher.js` | `affect/ColorSwitcher.java` | The Color Switcher affect module |
 | `js/modules/limit.js` | `affect/Limit.java` | The Limit affect module |
+| `js/modules/random.js` | `affect/Random.java` | The Random affect module |
+| `js/modules/repeat.js` | `affect/Repeat.java` | The Repeat affect module |
 | `js/modules/mirror.js` | `affect/Mirror.java` | The Mirror affect module: reflected copies while you draw |
 | `js/modules/gradient.js` | `affect/Gradient.java` | The Gradient affect module: fade to transparent |
 | `js/modules/smooth.js` | `affect/Smooth.java` | The Smooth affect module: round off shapes you hover over |

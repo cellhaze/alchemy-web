@@ -331,6 +331,22 @@
     canvas.redraw();
   });
 
+  // Random affect
+  affectToggle('random', Alchemy.modules.random, 'random-options');
+  slider('random-distortion', function (v) { Alchemy.modules.random.distortion = v; });
+
+  // Repeat affect
+  var repeatMod = Alchemy.modules.repeat;
+  affectToggle('repeat', repeatMod, 'repeat-options');
+  var repeatOn = document.getElementById('repeat-on');
+  function toggleRepeating() {
+    repeatMod.repeat = !repeatMod.repeat;
+    pressed(repeatOn, repeatMod.repeat);
+    repeatOn.textContent = repeatMod.repeat ? 'Repeating' : 'Paused';
+  }
+  repeatOn.addEventListener('click', toggleRepeating);
+  slider('repeat-interval', function (v) { repeatMod.interval = v; });
+
   // Displace affect
   affectToggle('displace', Alchemy.modules.displace, 'displace-options');
   slider('displace-amount', function (v) { Alchemy.modules.displace.displacement = v; });
@@ -344,6 +360,8 @@
     if (e.target.tagName === 'INPUT' || e.metaKey || e.ctrlKey || e.altKey) return;
     if ((e.key === 'r' || e.key === 'R') && canvas.isAffectActive(blindness)) {
       blindness.reveal();
+    } else if ((e.key === 'b' || e.key === 'B') && canvas.isAffectActive(repeatMod)) {
+      toggleRepeating();
     } else if (e.key === 's' || e.key === 'S') {
       styleButton.click();
     } else if (e.key === 'Backspace' || e.key === 'Delete') {
