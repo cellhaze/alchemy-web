@@ -31,6 +31,23 @@
       <button class="create-module" data-module="evolve" type="button" aria-pressed="false" title="Evolve: stamp shapes bred with a genetic algorithm (open the Evolver to rank and evolve them)">Evolve</button>
       <button class="create-module" data-module="trace" type="button" aria-pressed="false" title="Trace: a line that snaps to edges in a photo you can keep hidden">Trace</button>
       <button class="create-module" data-module="mic" type="button" aria-pressed="false" title="Mic: your voice fattens or shakes the line (uses the microphone)">Mic</button>
+      <button class="create-module" data-module="pitch" type="button" aria-pressed="false" title="Pitch: low notes draw thick, high notes thin (uses the microphone; best in Solid style)">Pitch</button>
+    </div>
+    <div id="pitch-options" class="sub" hidden>
+      <span class="tool" title="The pitch being heard">
+        <span>Pitch</span>
+        <output id="pitch-current">–</output>
+      </span>
+      <label class="tool" title="Pitches at or below this draw the thickest line">
+        <span>Lower</span>
+        <input id="pitch-min" type="range" min="50" max="1800" step="1" value="50">
+        <output for="pitch-min">50</output>
+      </label>
+      <label class="tool" title="Pitches at or above this draw the thinnest line">
+        <span>Upper</span>
+        <input id="pitch-max" type="range" min="50" max="1800" step="1" value="1800">
+        <output for="pitch-max">1800</output>
+      </label>
     </div>
     <div id="mic-options" class="sub" hidden>
       <button id="mic-mode" type="button" title="Switch between fatten and shake mode">Fatten</button>
@@ -329,6 +346,7 @@
   <script src="js/modules/trace.js"></script>
   <script src="js/microphone.js"></script>
   <script src="js/modules/mic.js"></script>
+  <script src="js/modules/pitch.js"></script>
   <script src="js/modules/micexpand.js"></script>
   <script src="js/modules/shapeswap.js"></script>
   <script src="js/modules/blindness.js"></script>

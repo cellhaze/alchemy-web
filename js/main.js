@@ -32,7 +32,8 @@
     pull: document.getElementById('pull-options'),
     evolve: document.getElementById('evolve-options'),
     trace: document.getElementById('trace-options'),
-    mic: document.getElementById('mic-options')
+    mic: document.getElementById('mic-options'),
+    pitch: document.getElementById('pitch-options')
   };
   function selectCreate(id) {
     canvas.setCreateModule(Alchemy.modules[id]);
@@ -285,6 +286,13 @@
     micMode.textContent = micMod.shake ? 'Shake' : 'Fatten';
   });
   slider('mic-volume', function (v) { micMod.volume = v * 0.02; });
+
+  // Pitch options
+  var pitchMod = Alchemy.modules.pitch;
+  var pitchCurrent = document.getElementById('pitch-current');
+  pitchMod.onPitch = function (hz) { pitchCurrent.textContent = Math.round(hz) + ' Hz'; };
+  slider('pitch-min', function (v) { pitchMod.minPitch = v; });
+  slider('pitch-max', function (v) { pitchMod.maxPitch = v; });
 
   // Pressure options
   var pressureAmount = document.getElementById('pressure-amount');
