@@ -28,7 +28,9 @@
     xshapes: document.getElementById('xshapes-options'),
     pressure: document.getElementById('pressure-options'),
     ribbon: document.getElementById('ribbon-options'),
-    type: document.getElementById('type-options')
+    type: document.getElementById('type-options'),
+    pull: document.getElementById('pull-options'),
+    evolve: document.getElementById('evolve-options')
   };
   function selectCreate(id) {
     canvas.setCreateModule(Alchemy.modules[id]);
@@ -110,6 +112,138 @@
   typeKeys.addEventListener('click', function () {
     typeMod.keys = !typeMod.keys;
     pressed(typeKeys, typeMod.keys);
+  });
+
+  // Shape library groups, shared by Pull and the Evolver
+  var svgFile = document.getElementById('svg-file');
+  var onSvgLoaded = null;
+  svgFile.addEventListener('change', function () {
+    var files = svgFile.files;
+    if (!files || !files.length || !onSvgLoaded) return;
+    var done = onSvgLoaded;
+    Alchemy.shapes.loadSVGFiles(files, 'My Shapes', function (count) {
+      if (!count) alert('No shapes were found in that SVG file.');
+      refreshGroupLists();
+      done(count);
+    });
+  });
+  function pickSVG(callback) {
+    onSvgLoaded = callback;
+    svgFile.value = '';
+    svgFile.click();
+  }
+  var pullGroup = document.getElementById('pull-group');
+  var evolverGroup = document.getElementById('evolver-group');
+  function refreshGroupLists() {
+    var groups = Alchemy.shapes.getGroups();
+    var pullValue = pullGroup.value;
+    pullGroup.innerHTML = '<option value="-1">All Shapes</option>';
+    evolverGroup.innerHTML = '<option value="" disabled selected>Library…</option>';
+    groups.forEach(function (g, i) {
+      var label = g.name + ' (' + g.shapes.length + ')';
+      pullGroup.add(new Option(label, String(i)));
+      evolverGroup.add(new Option(label, String(i)));
+    });
+    if (pullValue) pullGroup.value = pullValue;
+  }
+  refreshGroupLists();
+
+  // Pull options
+  var pull = Alchemy.modules.pull;
+  pullGroup.addEventListener('change', function () { pull.group = Number(pullGroup.value); });
+  document.getElementById('pull-load').addEventListener('click', function () {
+    pickSVG(function (count) {
+      if (!count) return;
+      // Switch to the group the shapes went into
+      var groups = Alchemy.shapes.getGroups();
+      for (var i = 0; i < groups.length; i++) {
+        if (groups[i].name === 'My Shapes') { pullGroup.value = String(i); pull.group = i; }
+      }
+    });
+  });
+  slider('pull-spacing', function (v) { pull.spacing = v; });
+  slider('pull-size', function (v) { pull.size = 0.1 + v / 10; });
+  var pullRotate = document.getElementById('pull-rotate');
+  pullRotate.addEventListener('click', function () {
+    pull.rotate = !pull.rotate;
+    pressed(pullRotate, pull.rotate);
+  });
+
+  // Evolve options and the Evolver window
+  var evolve = Alchemy.modules.evolve;
+  var evolver = document.getElementById('evolver');
+  var evolverGrid = document.getElementById('evolver-grid');
+  slider('evolve-spacing', function (v) { evolve.spacing = v; });
+
+  function renderEvolver() {
+    evolverGrid.innerHTML = '';
+    if (!evolve.shapes.length) {
+      var empty = document.createElement('p');
+      empty.className = 'evolver-empty';
+      empty.textContent = 'No shapes yet. Load shapes from the canvas, the library or an SVG file to begin.';
+      evolverGrid.appendChild(empty);
+      return;
+    }
+    var ink = getComputedStyle(document.documentElement).getPropertyValue('--bar-text').trim() || '#000';
+    var dpr = window.devicePixelRatio || 1;
+    evolve.shapes.forEach(function (shape, i) {
+      var tile = document.createElement('div');
+      tile.className = 'evolver-tile';
+      var cv = document.createElement('canvas');
+      cv.width = 100 * dpr; cv.height = 100 * dpr;
+      var ctx = cv.getContext('2d');
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      ctx.fillStyle = ink;
+      ctx.fill(shape.path, 'nonzero');
+      var label = document.createElement('label');
+      label.textContent = 'Rank ';
+      var rank = document.createElement('input');
+      rank.type = 'number'; rank.min = '0'; rank.max = '100'; rank.step = '1';
+      rank.value = String(shape.rank || 0);
+      rank.setAttribute('aria-label', 'Rank for shape ' + (i + 1));
+      rank.addEventListener('input', function () {
+        var v = Math.max(0, Math.min(100, Math.round(Number(rank.value)) || 0));
+        shape.rank = v;
+      });
+      label.appendChild(rank);
+      tile.appendChild(cv);
+      tile.appendChild(label);
+      evolverGrid.appendChild(tile);
+    });
+  }
+  document.getElementById('evolve-open').addEventListener('click', function () {
+    if (!evolve.shapes.length) evolve.loadFromCanvas(canvas);
+    renderEvolver();
+    evolver.showModal();
+  });
+  document.getElementById('evolver-canvas').addEventListener('click', function () {
+    evolve.loadFromCanvas(canvas);
+    renderEvolver();
+  });
+  evolverGroup.addEventListener('change', function () {
+    var g = Alchemy.shapes.getGroups()[Number(evolverGroup.value)];
+    if (g) evolve.setShapes(g.shapes);
+    evolverGroup.selectedIndex = 0;
+    renderEvolver();
+  });
+  document.getElementById('evolver-svg').addEventListener('click', function () {
+    pickSVG(function () {
+      var groups = Alchemy.shapes.getGroups();
+      var mine = groups.filter(function (g) { return g.name === 'My Shapes'; })[0];
+      if (mine) evolve.setShapes(mine.shapes);
+      renderEvolver();
+    });
+  });
+  var evolverMutation = document.getElementById('evolver-mutation');
+  evolverMutation.addEventListener('input', function () {
+    evolve.mutation = Number(evolverMutation.value) / 100;
+  });
+  document.getElementById('evolver-evolve').addEventListener('click', function () {
+    evolve.evolve();
+    renderEvolver();
+  });
+  document.getElementById('evolver-done').addEventListener('click', function () {
+    evolver.close();
   });
 
   // Pressure options
