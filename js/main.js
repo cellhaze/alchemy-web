@@ -23,7 +23,8 @@
   var createOptions = {
     splatter: document.getElementById('splatter-options'),
     speed: document.getElementById('speed-options'),
-    scrawl: document.getElementById('scrawl-options')
+    scrawl: document.getElementById('scrawl-options'),
+    detach: document.getElementById('detach-options')
   };
   function selectCreate(id) {
     canvas.setCreateModule(Alchemy.modules[id]);
@@ -78,6 +79,9 @@
   slider('scrawl-flow', function (v) { Alchemy.modules.scrawl.flow = v; });
   slider('scrawl-detail', function (v) { Alchemy.modules.scrawl.detail = v; });
   slider('scrawl-noise', function (v) { Alchemy.modules.scrawl.noise = v; });
+
+  // Detach options
+  slider('detach-distance', function (v) { Alchemy.modules.detach.distance = v; });
 
   // Style: line (stroke) or solid (fill)
   var styleButton = document.getElementById('style');

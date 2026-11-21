@@ -20,6 +20,15 @@
       <button class="create-module" data-module="splatter" type="button" aria-pressed="false" title="Splatter: paint splats and drips, fatter when you move slowly">Splatter</button>
       <button class="create-module" data-module="speed" type="button" aria-pressed="false" title="Speed: fast movement flings the line out ahead of the pen">Speed</button>
       <button class="create-module" data-module="scrawl" type="button" aria-pressed="false" title="Scrawl: a jittery, scribbly line">Scrawl</button>
+      <button class="create-module" data-module="inverse" type="button" aria-pressed="false" title="Inverse: draws while the button is up (move the mouse or hover the pen); press to end a shape">Inverse</button>
+      <button class="create-module" data-module="detach" type="button" aria-pressed="false" title="Detach: the line trails behind the pen on a leash">Detach</button>
+    </div>
+    <div id="detach-options" class="sub" hidden>
+      <label class="tool" title="How far behind the pen the line trails, in pixels">
+        <span>Distance</span>
+        <input id="detach-distance" type="range" min="0" max="300" step="1" value="100">
+        <output for="detach-distance">100</output>
+      </label>
     </div>
     <div id="speed-options" class="sub" hidden>
       <button id="speed-linetype" type="button" title="Change the line type to curved or straight">Curved</button>
@@ -127,6 +136,8 @@
   <script src="js/modules/splatter.js"></script>
   <script src="js/modules/speed.js"></script>
   <script src="js/modules/scrawl.js"></script>
+  <script src="js/modules/inverse.js"></script>
+  <script src="js/modules/detach.js"></script>
   <script src="js/modules/mirror.js"></script>
   <script src="js/modules/gradient.js"></script>
   <script src="js/modules/smooth.js"></script>

@@ -35,6 +35,14 @@ pen when you move fast, giving spiky bursts. **Speed** sets how far it flings, a
 between segments (higher means longer, looser segments), **Detail** sets how many wobbly
 steps each segment has, and **Noise** sets how far each step can wander.
 
+**Inverse** (create) draws while the button is *up*: move the mouse, or hover a pen just
+above the tablet, and the line follows. Press (or tap the pen) to end and save the shape;
+the next move starts a new one. Touch screens can't hover, so it doesn't work with fingers.
+
+**Detach** (create) trails the line behind the pen on a leash, **Distance** px back (0–300),
+so corners round off and the line lags behind your hand. The end of the leash is remembered
+between strokes, so each stroke starts from where the last one left off.
+
 **Gradient** (affect) fades each shape from its colour to transparent, from where the
 stroke starts to where it ends.
 
@@ -84,6 +92,8 @@ original Alchemy could also export PDF; that would need a library, so it isn't i
 | `js/modules/splatter.js` | `create/SplatterShapes.java` | The Splatter create module |
 | `js/modules/speed.js` | `create/SpeedShapes.java` | The Speed create module |
 | `js/modules/scrawl.js` | `create/ScrawlShapes.java` | The Scrawl create module |
+| `js/modules/inverse.js` | `create/InverseShapes.java` | The Inverse create module |
+| `js/modules/detach.js` | `create/DetachShapes.java` | The Detach create module |
 | `js/modules/mirror.js` | `affect/Mirror.java` | The Mirror affect module: reflected copies while you draw |
 | `js/modules/gradient.js` | `affect/Gradient.java` | The Gradient affect module: fade to transparent |
 | `js/modules/smooth.js` | `affect/Smooth.java` | The Smooth affect module: round off shapes you hover over |
