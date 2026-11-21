@@ -11,6 +11,9 @@ affect modules that change what you draw (**Mirror**, **Gradient**, **Smooth**, 
 **Mic Expand**). The toolbar also has line/solid style, colour, opacity, line weight,
 background colour and image, flip, clear and PNG/SVG export.
 
+[docs/MODULES.md](docs/MODULES.md) describes how each module works in the original desktop
+client.
+
 ## Running it
 
 Open `index.html` in a browser. No server or build step is needed. Pointer events are
