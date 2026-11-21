@@ -195,6 +195,25 @@
     return copy;
   };
 
+  /** Replace the whole path with a new segment list (like AlcShape.setPath). */
+  Shape.prototype.setSegments = function (segments) {
+    this.segments = segments;
+    this.rebuildPath();
+  };
+
+  // One shared, untransformed context for hit testing.
+  var hitCtx = null;
+
+  /**
+   * Is point p inside the shape's area (GeneralPath.contains)? Open paths
+   * count as closed and the non-zero winding rule applies, so a thin line
+   * only "contains" the area it loops around, as in the desktop client.
+   */
+  Shape.prototype.contains = function (p) {
+    if (!hitCtx) hitCtx = document.createElement('canvas').getContext('2d');
+    return hitCtx.isPointInPath(this.path, p.x, p.y, 'nonzero');
+  };
+
   /** End point of every segment, like AlcShape.getPoints(). */
   Shape.prototype.getPoints = function () {
     var pts = [];

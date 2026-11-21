@@ -106,6 +106,18 @@
       <button id="mirror-reset" type="button" title="Move the axis back to the centre of the canvas">Centre</button>
     </div>
     <button id="gradient" type="button" aria-pressed="false" title="Gradient affect: fade each shape from its colour to transparent">Gradient</button>
+    <button id="smooth" type="button" aria-pressed="false" title="Smooth affect: hover over a finished shape (without pressing) to round it off">Smooth</button>
+    <div id="smooth-options" class="sub" hidden>
+      <button id="smooth-repeat" type="button" aria-pressed="false" title="Add smoothed copies instead of changing the shape">Repeat</button>
+    </div>
+    <button id="displace" type="button" aria-pressed="false" title="Displace affect: the shape you draw swells when you move slowly and shrinks when you move fast">Displace</button>
+    <div id="displace-options" class="sub" hidden>
+      <label class="tool" title="Change the amount of displacement">
+        <span>Displacement</span>
+        <input id="displace-amount" type="range" min="1" max="15" step="1" value="7">
+        <output for="displace-amount">7</output>
+      </label>
+    </div>
   </div>
 
   <script src="js/shape.js"></script>
@@ -117,6 +129,8 @@
   <script src="js/modules/scrawl.js"></script>
   <script src="js/modules/mirror.js"></script>
   <script src="js/modules/gradient.js"></script>
+  <script src="js/modules/smooth.js"></script>
+  <script src="js/modules/displace.js"></script>
   <script src="js/main.js"></script>
 </body>
 </html>

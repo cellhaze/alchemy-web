@@ -38,6 +38,17 @@ steps each segment has, and **Noise** sets how far each step can wander.
 **Gradient** (affect) fades each shape from its colour to transparent, from where the
 stroke starts to where it ends.
 
+**Smooth** (affect) rounds off finished shapes: hover over one without pressing and it
+gets smoother about every 75 ms. "Over" means inside the shape's area, so for a line you
+need to hover inside a loop it makes. **Repeat** adds smoothed copies instead of changing
+the shape; like the desktop client, the copies use the current toolbar colour, opacity,
+style and weight.
+
+**Displace** (affect) bends the shape you're drawing: every point moves away from the
+pen's end point when you draw slower than the **Displacement** setting, and toward it when
+you draw faster. Its strength depends on how many pen events arrive per second, so a fast
+tablet makes it stronger.
+
 Several affects can be on at once, e.g. Mirror and Gradient together.
 
 **Opacity** sets how see-through new strokes are (1–100%). Like colour and weight, it
@@ -75,6 +86,8 @@ original Alchemy could also export PDF; that would need a library, so it isn't i
 | `js/modules/scrawl.js` | `create/ScrawlShapes.java` | The Scrawl create module |
 | `js/modules/mirror.js` | `affect/Mirror.java` | The Mirror affect module: reflected copies while you draw |
 | `js/modules/gradient.js` | `affect/Gradient.java` | The Gradient affect module: fade to transparent |
+| `js/modules/smooth.js` | `affect/Smooth.java` | The Smooth affect module: round off shapes you hover over |
+| `js/modules/displace.js` | `affect/Displace.java` | The Displace affect module: swell or shrink shapes as you draw |
 | `js/export.js` | `core/AlcExportDialog.java` | Export as PNG or SVG |
 | `js/main.js` | — | Startup and toolbar |
 

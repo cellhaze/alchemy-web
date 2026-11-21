@@ -241,6 +241,30 @@
     pressed(gradientButton, on);
   });
 
+  /** Wire an affect's on/off button, showing its options row while it's on. */
+  function affectToggle(buttonId, module, optionsId) {
+    var button = document.getElementById(buttonId);
+    var options = optionsId ? document.getElementById(optionsId) : null;
+    button.addEventListener('click', function () {
+      var on = !canvas.isAffectActive(module);
+      canvas.setAffect(module, on);
+      pressed(button, on);
+      if (options) options.hidden = !on;
+    });
+  }
+
+  // Smooth affect
+  affectToggle('smooth', Alchemy.modules.smooth, 'smooth-options');
+  var smoothRepeat = document.getElementById('smooth-repeat');
+  smoothRepeat.addEventListener('click', function () {
+    Alchemy.modules.smooth.repeat = !Alchemy.modules.smooth.repeat;
+    pressed(smoothRepeat, Alchemy.modules.smooth.repeat);
+  });
+
+  // Displace affect
+  affectToggle('displace', Alchemy.modules.displace, 'displace-options');
+  slider('displace-amount', function (v) { Alchemy.modules.displace.displacement = v; });
+
   // Keyboard shortcuts: S toggles style, Backspace/Delete clears, Esc cancels axis select
   window.addEventListener('keydown', function (e) {
     if (e.key === 'Escape' && mirror.selectingAxis) {
