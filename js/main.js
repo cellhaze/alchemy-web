@@ -26,7 +26,9 @@
     scrawl: document.getElementById('scrawl-options'),
     detach: document.getElementById('detach-options'),
     xshapes: document.getElementById('xshapes-options'),
-    pressure: document.getElementById('pressure-options')
+    pressure: document.getElementById('pressure-options'),
+    ribbon: document.getElementById('ribbon-options'),
+    type: document.getElementById('type-options')
   };
   function selectCreate(id) {
     canvas.setCreateModule(Alchemy.modules[id]);
@@ -87,6 +89,28 @@
 
   // X Shapes options: the Java slider value is halved into the multiplier
   slider('xshapes-distance', function (v) { Alchemy.modules.xshapes.multiplier = Math.trunc(v / 2); });
+
+  // Ribbon options
+  var ribbon = Alchemy.modules.ribbon;
+  var ribbonSize = document.getElementById('ribbon-size');
+  ribbonSize.addEventListener('change', function () { ribbon.size = clampInput(ribbonSize); });
+  var ribbonSpacing = document.getElementById('ribbon-spacing');
+  ribbonSpacing.addEventListener('change', function () { ribbon.spacing = clampInput(ribbonSpacing); });
+  slider('ribbon-friction', function (v) { ribbon.friction = v * 0.01; });
+  slider('ribbon-gravity', function (v) { ribbon.gravity = v * 0.01; });
+
+  // Type options
+  var typeMod = Alchemy.modules.type;
+  slider('type-distortion', function (v) { typeMod.distortion = v * 0.01; });
+  slider('type-size', function (v) { typeMod.size = 0.1 + v / 10; });
+  document.getElementById('type-generate').addEventListener('click', function () {
+    typeMod.generate(canvas);
+  });
+  var typeKeys = document.getElementById('type-keys');
+  typeKeys.addEventListener('click', function () {
+    typeMod.keys = !typeMod.keys;
+    pressed(typeKeys, typeMod.keys);
+  });
 
   // Pressure options
   var pressureAmount = document.getElementById('pressure-amount');
@@ -358,7 +382,16 @@
       return;
     }
     if (e.target.tagName === 'INPUT' || e.metaKey || e.ctrlKey || e.altKey) return;
-    if ((e.key === 'r' || e.key === 'R') && canvas.isAffectActive(blindness)) {
+    var typing = canvas.createModule === typeMod;
+    if (typing && e.key === ' ') {
+      // Space makes an abstract shape; stop it from also pressing a focused button
+      e.preventDefault();
+      if (document.activeElement && document.activeElement.blur) document.activeElement.blur();
+      if (!e.repeat) typeMod.generate(canvas);
+    } else if (typing && typeMod.keys && e.key.length === 1 && !e.repeat) {
+      // Key Drawing takes over single-character shortcuts while it's on
+      typeMod.typeKey(canvas, e.key);
+    } else if ((e.key === 'r' || e.key === 'R') && canvas.isAffectActive(blindness)) {
       blindness.reveal();
     } else if ((e.key === 'b' || e.key === 'B') && canvas.isAffectActive(repeatMod)) {
       toggleRepeating();

@@ -15,7 +15,7 @@ used throughout, so mouse, pen tablet and touch all draw.
 
 Shortcuts: **S** toggles line/solid, **Backspace** or **Delete** clears, **Esc** cancels
 picking a mirror axis, **R** reveals the drawing while Blindness is on, **B** pauses and
-resumes Repeat.
+resumes Repeat, **Space** makes an abstract shape with Type.
 
 **Mirror** draws reflected copies as you draw. Horizontal flips left/right, Vertical flips
 top/bottom, and both together give four-way symmetry. **Set axis** shows a cyan crosshair;
@@ -63,6 +63,21 @@ see the outline traced around the stroke. Mirror, Gradient and Displace all work
 **Blindness** (affect) lets you draw without seeing: the screen stops updating until you
 reveal it. **Auto-reveal** (on by default) shows the drawing each time you lift the pen;
 **Reveal** or the **R** key shows it any time. Clear still clears the screen.
+
+**Ribbon** (create) draws flowing, twisting ribbons that sag with gravity, saving a new
+piece every **Spacing** ms so a stroke leaves overlapping pieces. The ribbon gets wider the
+faster you move; **Size** (1–100) raises both the maximum width and how strongly speed
+widens it. **Friction** above 100 makes the ribbon speed up rather than settle, and
+**Gravity** pulls it down, as in the desktop client.
+
+**Type** (create) makes shapes from letters. Press or drag to stamp random characters in
+random fonts, sized by how fast you move (**Size** scales them). **Space** or
+**Auto-generate** builds an abstract shape from several distorted letters merged together.
+**Key Drawing** stamps the keys you type (while it's on, letter keys type instead of
+working as shortcuts). **Distortion** controls how much the letters get mangled. Unlike the
+desktop client, which read letter outlines straight from your fonts, the browser version
+traces each letter from an offscreen drawing and picks fonts from a list of common names
+you have installed.
 
 **Color Switcher** (affect) gives each new stroke a new random colour and/or transparency.
 **Base Color** switches the colour, wandering around the base colour in the swatch next to
@@ -142,6 +157,8 @@ original Alchemy could also export PDF; that would need a library, so it isn't i
 | `js/modules/xshapes.js` | `create/XShapes.java` | The X Shapes create module |
 | `js/modules/median.js` | `create/MedianShapes.java` | The Median create module |
 | `js/modules/pressure.js` | `create/PressureShapes.java` | The Pressure create module |
+| `js/modules/ribbon.js` | `create/RibbonShapes.java` | The Ribbon create module |
+| `js/modules/type.js` | `create/TypeShapes.java` | The Type create module (with glyph tracing) |
 | `js/modules/blindness.js` | `affect/Blindness.java` | The Blindness affect module |
 | `js/modules/colorswitcher.js` | `affect/ColorSwitcher.java` | The Color Switcher affect module |
 | `js/modules/limit.js` | `affect/Limit.java` | The Limit affect module |

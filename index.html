@@ -25,6 +25,42 @@
       <button class="create-module" data-module="xshapes" type="button" aria-pressed="false" title="X Shapes: a zig-zag fan that sprays out to one side of your stroke">X Shapes</button>
       <button class="create-module" data-module="median" type="button" aria-pressed="false" title="Median: each stroke also draws a line halfway to the previous stroke">Median</button>
       <button class="create-module" data-module="pressure" type="button" aria-pressed="false" title="Pressure: a stroke that swells and thins with pen pressure (best in Solid style)">Pressure</button>
+      <button class="create-module" data-module="ribbon" type="button" aria-pressed="false" title="Ribbon: flowing, twisting ribbons that sag with gravity">Ribbon</button>
+      <button class="create-module" data-module="type" type="button" aria-pressed="false" title="Type: shapes made from distorted letters (Space makes an abstract shape)">Type</button>
+    </div>
+    <div id="ribbon-options" class="sub" hidden>
+      <label class="tool" title="The ribbon size">
+        <span>Size</span>
+        <input id="ribbon-size" type="number" min="1" max="100" step="1" value="50">
+      </label>
+      <label class="tool" title="Milliseconds between ribbon pieces">
+        <span>Spacing</span>
+        <input id="ribbon-spacing" type="number" min="1" max="100" step="1" value="25">
+      </label>
+      <label class="tool" title="Ribbon friction (above 100 the ribbon speeds up)">
+        <span>Friction</span>
+        <input id="ribbon-friction" type="range" min="1" max="200" step="1" value="110">
+        <output for="ribbon-friction">110</output>
+      </label>
+      <label class="tool" title="Ribbon gravity">
+        <span>Gravity</span>
+        <input id="ribbon-gravity" type="range" min="0" max="200" step="1" value="15">
+        <output for="ribbon-gravity">15</output>
+      </label>
+    </div>
+    <div id="type-options" class="sub" hidden>
+      <label class="tool" title="How much the letters get distorted">
+        <span>Distortion</span>
+        <input id="type-distortion" type="range" min="0" max="100" step="1" value="50">
+        <output for="type-distortion">50</output>
+      </label>
+      <button id="type-generate" type="button" title="Create an abstract shape from merged letters (Space)">Auto-generate</button>
+      <label class="tool" title="The size of the letters you stamp">
+        <span>Size</span>
+        <input id="type-size" type="range" min="1" max="50" step="1" value="24">
+        <output for="type-size">24</output>
+      </label>
+      <button id="type-keys" type="button" aria-pressed="false" title="Type on the keyboard to stamp letters (takes over the S, R and B shortcuts)">Key Drawing</button>
     </div>
     <div id="pressure-options" class="sub" hidden>
       <label class="tool" title="How wide full pen pressure makes the stroke, on each side">
@@ -201,6 +237,8 @@
   <script src="js/modules/xshapes.js"></script>
   <script src="js/modules/median.js"></script>
   <script src="js/modules/pressure.js"></script>
+  <script src="js/modules/ribbon.js"></script>
+  <script src="js/modules/type.js"></script>
   <script src="js/modules/blindness.js"></script>
   <script src="js/modules/colorswitcher.js"></script>
   <script src="js/modules/limit.js"></script>
