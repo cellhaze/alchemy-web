@@ -590,6 +590,59 @@
     if (panel.classList.contains('click')) exportButton.addEventListener('click', place);
   });
 
+  // Fullscreen: hide the toolbar and, where the browser allows it, take over
+  // the whole screen. A chevron in the corner brings everything back, so
+  // tablets without a keyboard can always get out.
+  var fullscreenButton = document.getElementById('fullscreen');
+  var fullscreenExit = document.getElementById('fullscreen-exit');
+  var root = document.documentElement;
+  function browserFullscreen() {
+    return document.fullscreenElement || document.webkitFullscreenElement || null;
+  }
+  function showFullscreen(on) {
+    document.body.classList.toggle('fullscreen', on);
+    fullscreenExit.hidden = !on;
+    if (!exportOptions.hidden) showExport(false);
+    if (document.activeElement && document.activeElement.blur) document.activeElement.blur();
+  }
+  // Skip the browser's own fullscreen when it would get in the way: on iPhone
+  // and iPad Safari adds a close button of its own on top of the chevron, and
+  // a home-screen app already has no browser bars to hide.
+  var appleTouch = /iPhone|iPad|iPod/.test(navigator.userAgent) ||
+    (/Macintosh/.test(navigator.userAgent) && navigator.maxTouchPoints > 1);
+  var homeScreenApp = navigator.standalone === true ||
+    (window.matchMedia && window.matchMedia('(display-mode: standalone), (display-mode: fullscreen)').matches);
+  var useBrowserFullscreen = !appleTouch && !homeScreenApp;
+  function enterFullscreen() {
+    showFullscreen(true);
+    var request = root.requestFullscreen || root.webkitRequestFullscreen;
+    if (useBrowserFullscreen && request && !browserFullscreen()) {
+      var result = request.call(root);
+      if (result && result.catch) result.catch(function () {});
+    }
+  }
+  function exitFullscreen() {
+    showFullscreen(false);
+    var exit = document.exitFullscreen || document.webkitExitFullscreen;
+    if (exit && browserFullscreen()) {
+      var result = exit.call(document);
+      if (result && result.catch) result.catch(function () {});
+    }
+  }
+  function toggleFullscreen() {
+    if (document.body.classList.contains('fullscreen')) exitFullscreen();
+    else enterFullscreen();
+  }
+  fullscreenButton.addEventListener('click', enterFullscreen);
+  fullscreenExit.addEventListener('click', exitFullscreen);
+  // Leaving the browser's fullscreen another way (Esc, a system gesture)
+  // brings the toolbar back too.
+  function onFullscreenChange() {
+    if (!browserFullscreen() && document.body.classList.contains('fullscreen')) showFullscreen(false);
+  }
+  document.addEventListener('fullscreenchange', onFullscreenChange);
+  document.addEventListener('webkitfullscreenchange', onFullscreenChange);
+
   // Pressing on the canvas closes any open settings panel: drop focus from the
   // toolbar (a focused field keeps its panel open) and close Export.
   canvas.el.addEventListener('pointerdown', function () {
@@ -606,6 +659,11 @@
       mirror.cancelAxisSelect();
       return;
     }
+    // Esc also leaves fullscreen mode where the browser has no real fullscreen
+    if (e.key === 'Escape' && document.body.classList.contains('fullscreen')) {
+      exitFullscreen();
+      return;
+    }
     if (e.target.tagName === 'INPUT' || e.metaKey || e.ctrlKey || e.altKey) return;
     var typing = canvas.createModule === typeMod;
     if (typing && e.key === ' ') {
@@ -620,6 +678,8 @@
       blindness.reveal();
     } else if ((e.key === 'b' || e.key === 'B') && canvas.isAffectActive(repeatMod)) {
       toggleRepeating();
+    } else if ((e.key === 'f' || e.key === 'F') && !e.repeat) {
+      toggleFullscreen();
     } else if (e.key === 's' || e.key === 'S') {
       styleButton.click();
     } else if (e.key === 'Backspace' || e.key === 'Delete') {

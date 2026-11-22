@@ -6,9 +6,17 @@
 <html lang="en">
 <head>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+  <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no, viewport-fit=cover">
   <meta name="color-scheme" content="light dark">
   <title>Alchemy</title>
+  <!-- Home-screen app: opened from the icon it runs without the browser's bars -->
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="icon" href="icons/icon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-title" content="Alchemy">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -62,6 +70,8 @@
         <button id="flip-h" type="button" title="Flip the drawing left to right">Flip H</button>
         <button id="flip-v" type="button" title="Flip the drawing top to bottom">Flip V</button>
       </div>
+
+      <button id="fullscreen" type="button" title="Hide the toolbar and fill the screen (F)">Fullscreen</button>
     </div>
 
     <div class="toolbar-row" role="group" aria-label="Shapes">
@@ -363,6 +373,10 @@
       </span>
     </div>
   </div>
+
+  <button id="fullscreen-exit" type="button" title="Show the toolbar and leave fullscreen (F)" aria-label="Exit fullscreen" hidden>
+    <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><path d="M6 9l6 6 6-6" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+  </button>
 
   <dialog id="evolver" aria-labelledby="evolver-title">
     <div class="evolver-bar">
