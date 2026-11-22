@@ -72,14 +72,10 @@ html, body {
   display: flex;
   flex-direction: column;
   align-items: stretch;
-  gap: 0;
-  padding: 0 8px;
+  gap: 6px;
+  padding: 0;
   color: var(--bar-text);
   accent-color: var(--bar-text);
-  background: var(--bar-bg);
-  border: 1px solid var(--bar-border);
-  border-radius: 6px;
-  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.15);
   user-select: none;
   -webkit-user-select: none;
   touch-action: manipulation;
@@ -97,8 +93,76 @@ html, body {
   padding: 6px 0;
 }
 
+/*
+ * Only the first row sits on a panel. The Shapes and Effects buttons float
+ * straight over the canvas, and the gaps between them let pointers through
+ * so you can draw there.
+ */
+.toolbar-row:first-child {
+  padding: 6px 8px;
+  background: var(--bar-bg);
+  border: 1px solid var(--bar-border);
+  border-radius: 6px;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.15);
+}
+
 .toolbar-row + .toolbar-row {
-  border-top: 1px solid var(--bar-border);
+  padding: 0;
+  pointer-events: none;
+}
+
+.toolbar-row + .toolbar-row > *,
+.toolbar-row + .toolbar-row .inline-group > * {
+  pointer-events: auto;
+}
+
+/*
+ * The floating Shapes and Effects buttons have no background: just text in
+ * a colour that shows up on the canvas (dark on a light canvas, light on a
+ * dark one; main.js sets --float-ink from the background colour), with a
+ * soft halo so it stays readable over a drawing. Selected ones get a border.
+ * Their settings panels keep their normal look.
+ */
+:root {
+  --float-ink: #1c1c1e;
+  --float-halo: #ffffff;
+}
+
+#toolbar :is(
+  .toolbar-row + .toolbar-row > button,
+  .toolbar-row + .toolbar-row > .has-options > button,
+  .inline-group > button,
+  .inline-group > .has-options > button
+) {
+  color: var(--float-ink);
+  background: transparent;
+  border: 1.5px solid transparent;
+  box-shadow: none;
+  text-shadow: 0 0 2px var(--float-halo), 0 0 4px var(--float-halo);
+  font-weight: 500;
+}
+
+#toolbar :is(
+  .toolbar-row + .toolbar-row > button,
+  .toolbar-row + .toolbar-row > .has-options > button,
+  .inline-group > button,
+  .inline-group > .has-options > button
+):hover {
+  background: transparent;
+  border-color: color-mix(in srgb, var(--float-ink) 35%, transparent);
+}
+
+#toolbar :is(
+  .toolbar-row + .toolbar-row > button,
+  .toolbar-row + .toolbar-row > .has-options > button,
+  .inline-group > button,
+  .inline-group > .has-options > button
+)[aria-pressed="true"] {
+  color: var(--float-ink);
+  background: transparent;
+  border-color: var(--float-ink);
+  /* A thin halo on both sides of the border keeps it visible over a drawing */
+  box-shadow: 0 0 0 1px var(--float-halo), inset 0 0 0 1px var(--float-halo);
 }
 
 /*
@@ -106,21 +170,17 @@ html, body {
  * label shows, and clicking it opens the row again. The arrow shows which.
  */
 #toolbar .row-label {
-  min-width: 64px;
+  min-width: 84px;
   height: 28px;
-  margin-left: -4px;
-  padding: 0 4px;
+  padding: 0 8px 0 6px;
   text-align: left;
   font-size: 11px;
   font-weight: 600;
   letter-spacing: 0.04em;
   text-transform: uppercase;
-  color: var(--bar-text);
-  background: none;
-  border: none;
   border-radius: 4px;
-  opacity: 0.6;
-  transition: opacity 0.15s, background-color 0.15s;
+  opacity: 0.7;
+  transition: opacity 0.15s, border-color 0.15s;
 }
 
 #toolbar .row-label::before {
@@ -136,7 +196,6 @@ html, body {
 #toolbar .row-label:hover,
 #toolbar .row-label:focus-visible {
   opacity: 1;
-  background: var(--button-hover);
 }
 
 .toolbar-row.collapsed > :not(.row-label) {
@@ -144,7 +203,7 @@ html, body {
 }
 
 .toolbar-row.collapsed {
-  padding: 2px 0;
+  padding: 0;
 }
 
 #toolbar button {

@@ -358,7 +358,22 @@
   bgColorInput.addEventListener('input', function () {
     canvas.bgColor = bgColorInput.value;
     canvas.redraw();
+    updateFloatInk();
   });
+
+  // The floating Shapes and Effects buttons have no background, so their text
+  // takes whichever of dark or light stands out on the canvas colour.
+  function updateFloatInk() {
+    var hex = /^#([0-9a-f]{6})$/i.exec(canvas.bgColor);
+    if (!hex) return;
+    var n = parseInt(hex[1], 16);
+    var lin = function (c) { c /= 255; return c <= 0.03928 ? c / 12.92 : Math.pow((c + 0.055) / 1.055, 2.4); };
+    var lum = 0.2126 * lin(n >> 16) + 0.7152 * lin((n >> 8) & 255) + 0.0722 * lin(n & 255);
+    var light = lum > 0.18;
+    document.documentElement.style.setProperty('--float-ink', light ? '#1c1c1e' : '#f5f5f5');
+    document.documentElement.style.setProperty('--float-halo', light ? '#ffffff' : '#000000');
+  }
+  updateFloatInk();
 
   // Clear
   document.getElementById('clear').addEventListener('click', function () {
@@ -680,7 +695,9 @@
     if (!revealed) return;
     var active = document.activeElement;
     var editing = active && toolbar.contains(active) && /^(INPUT|SELECT)$/.test(active.tagName);
-    if (toolbar.contains(e.target) || e.clientY <= 10 || editing) {
+    var r = toolbar.getBoundingClientRect();
+    var overToolbar = e.clientX >= r.left && e.clientX <= r.right && e.clientY <= r.bottom + 8;
+    if (overToolbar || toolbar.contains(e.target) || e.clientY <= 10 || editing) {
       cancelHide();
     } else if (!hideTimer) {
       hideTimer = setTimeout(hideToolbar, 400);
