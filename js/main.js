@@ -611,31 +611,105 @@
     });
   });
 
-  // Fullscreen: hide the toolbar and, where the browser allows it, take over
-  // the whole screen. A chevron in the corner brings everything back, so
-  // tablets without a keyboard can always get out.
+  // The toolbar hides above the page until it's wanted: the mouse (or a
+  // hovering pen) reaching the top edge brings it down, and so does the tab
+  // at the top, for touch screens. Moving away or drawing hides it again.
+  // The pin keeps it down. Fullscreen always hides it and adds an X to leave.
+  var toolbar = document.getElementById('toolbar');
+  var pinButton = document.getElementById('pin');
+  var showButton = document.getElementById('toolbar-show');
   var fullscreenButton = document.getElementById('fullscreen');
   var fullscreenExit = document.getElementById('fullscreen-exit');
+  var pinned = false;
+  try { pinned = localStorage.getItem('alchemy.pinned') === '1'; } catch (e) {}
+  var fullscreen = false;
+  var revealed = false;
+  var hideTimer = null;
+
+  function toolbarShown() {
+    return revealed || (pinned && !fullscreen);
+  }
+  function updateToolbar() {
+    var shown = toolbarShown();
+    document.body.classList.toggle('toolbar-hidden', !shown);
+    showButton.hidden = shown;
+    fullscreenExit.hidden = !fullscreen || shown;
+    // In fullscreen the toolbar always hides, so pinning doesn't apply there
+    pinButton.hidden = fullscreen;
+    pressed(pinButton, pinned);
+    pressed(fullscreenButton, fullscreen);
+  }
+  function cancelHide() {
+    if (hideTimer) { clearTimeout(hideTimer); hideTimer = null; }
+  }
+  function revealToolbar() {
+    cancelHide();
+    if (toolbarShown()) return;
+    revealed = true;
+    updateToolbar();
+  }
+  function hideToolbar() {
+    cancelHide();
+    if (!revealed) return;
+    revealed = false;
+    if (!exportOptions.hidden) showExport(false);
+    var active = document.activeElement;
+    if (active && active !== document.body && toolbar.contains(active)) active.blur();
+    updateToolbar();
+  }
+
+  pinButton.addEventListener('click', function () {
+    pinned = !pinned;
+    try { localStorage.setItem('alchemy.pinned', pinned ? '1' : '0'); } catch (e) {}
+    // Unpinning while the pointer is on the toolbar leaves it up until it moves away
+    revealed = !pinned;
+    updateToolbar();
+  });
+  showButton.addEventListener('click', revealToolbar);
+
+  // Mouse and pen hover: the top few pixels open it; once the pointer has
+  // moved off the toolbar (and its settings panels) for a moment it closes.
+  // Not while a button is held (dragging a slider out of the bar), or while a
+  // field, colour picker or drop-down list has focus.
+  window.addEventListener('pointermove', function (e) {
+    if (e.pointerType === 'touch' || e.buttons !== 0) return;
+    if (!toolbarShown()) {
+      if (e.clientY <= 6) revealToolbar();
+      return;
+    }
+    if (!revealed) return;
+    var active = document.activeElement;
+    var editing = active && toolbar.contains(active) && /^(INPUT|SELECT)$/.test(active.tagName);
+    if (toolbar.contains(e.target) || e.clientY <= 10 || editing) {
+      cancelHide();
+    } else if (!hideTimer) {
+      hideTimer = setTimeout(hideToolbar, 400);
+    }
+  });
+  document.documentElement.addEventListener('pointerleave', cancelHide);
+
+  // Fullscreen: hide the toolbar and, where the browser allows it, take over
+  // the whole screen.
   var root = document.documentElement;
   function browserFullscreen() {
     return document.fullscreenElement || document.webkitFullscreenElement || null;
   }
-  function showFullscreen(on) {
-    document.body.classList.toggle('fullscreen', on);
-    fullscreenExit.hidden = !on;
-    if (!exportOptions.hidden) showExport(false);
-    if (document.activeElement && document.activeElement.blur) document.activeElement.blur();
-  }
   // Skip the browser's own fullscreen when it would get in the way: on iPhone
-  // and iPad Safari adds a close button of its own on top of the chevron, and
-  // a home-screen app already has no browser bars to hide.
+  // and iPad Safari adds a close button of its own on top of ours, and a
+  // home-screen app already has no browser bars to hide.
   var appleTouch = /iPhone|iPad|iPod/.test(navigator.userAgent) ||
     (/Macintosh/.test(navigator.userAgent) && navigator.maxTouchPoints > 1);
   var homeScreenApp = navigator.standalone === true ||
     (window.matchMedia && window.matchMedia('(display-mode: standalone), (display-mode: fullscreen)').matches);
   var useBrowserFullscreen = !appleTouch && !homeScreenApp;
+  function setFullscreen(on) {
+    fullscreen = on;
+    revealed = true; // let hideToolbar tidy up focus and panels
+    hideToolbar();
+    updateToolbar();
+  }
   function enterFullscreen() {
-    showFullscreen(true);
+    setFullscreen(true);
     var request = root.requestFullscreen || root.webkitRequestFullscreen;
     if (useBrowserFullscreen && request && !browserFullscreen()) {
       var result = request.call(root);
@@ -643,7 +717,7 @@
     }
   }
   function exitFullscreen() {
-    showFullscreen(false);
+    setFullscreen(false);
     var exit = document.exitFullscreen || document.webkitExitFullscreen;
     if (exit && browserFullscreen()) {
       var result = exit.call(document);
@@ -651,27 +725,30 @@
     }
   }
   function toggleFullscreen() {
-    if (document.body.classList.contains('fullscreen')) exitFullscreen();
+    if (fullscreen) exitFullscreen();
     else enterFullscreen();
   }
-  fullscreenButton.addEventListener('click', enterFullscreen);
+  fullscreenButton.addEventListener('click', toggleFullscreen);
   fullscreenExit.addEventListener('click', exitFullscreen);
   // Leaving the browser's fullscreen another way (Esc, a system gesture)
-  // brings the toolbar back too.
+  // leaves fullscreen mode too.
   function onFullscreenChange() {
-    if (!browserFullscreen() && document.body.classList.contains('fullscreen')) showFullscreen(false);
+    if (!browserFullscreen() && fullscreen) setFullscreen(false);
   }
   document.addEventListener('fullscreenchange', onFullscreenChange);
   document.addEventListener('webkitfullscreenchange', onFullscreenChange);
+  updateToolbar();
 
-  // Pressing on the canvas closes any open settings panel: drop focus from the
-  // toolbar (a focused field keeps its panel open) and close Export.
+  // Pressing on the canvas closes any open settings panel (drop focus from the
+  // toolbar, as a focused field keeps its panel open, and close Export), and
+  // sends a toolbar that was only showing for the moment back up.
   canvas.el.addEventListener('pointerdown', function () {
     var active = document.activeElement;
-    if (active && active !== document.body && document.getElementById('toolbar').contains(active)) {
+    if (active && active !== document.body && toolbar.contains(active)) {
       active.blur();
     }
     if (!exportOptions.hidden) showExport(false);
+    hideToolbar();
   });
 
   // Keyboard shortcuts: S toggles style, Backspace/Delete clears, Esc cancels axis select
@@ -681,7 +758,7 @@
       return;
     }
     // Esc also leaves fullscreen mode where the browser has no real fullscreen
-    if (e.key === 'Escape' && document.body.classList.contains('fullscreen')) {
+    if (e.key === 'Escape' && fullscreen) {
       exitFullscreen();
       return;
     }

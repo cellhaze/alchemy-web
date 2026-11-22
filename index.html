@@ -83,7 +83,12 @@
         <button id="flip-v" type="button" title="Flip the drawing top to bottom">Flip V</button>
       </div>
 
-      <button id="fullscreen" type="button" title="Hide the toolbar and fill the screen (F)">Fullscreen</button>
+      <span class="toolbar-end">
+        <button id="pin" type="button" aria-pressed="false" aria-label="Pin the toolbar" title="Pin the toolbar so it stays open">
+          <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path d="M12 16v6M9 2.5h6l-1 6.5 3.5 3.5V15h-11v-2.5L10 9z" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
+        <button id="fullscreen" type="button" aria-pressed="false" title="Fill the screen and hide the toolbar (F)">Fullscreen</button>
+      </span>
     </div>
 
     <div class="toolbar-row" role="group" aria-label="Shapes">
@@ -377,8 +382,12 @@
     </div>
   </div>
 
-  <button id="fullscreen-exit" type="button" title="Show the toolbar and leave fullscreen (F)" aria-label="Exit fullscreen" hidden>
-    <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><path d="M6 9l6 6 6-6" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+  <!-- Shown while the toolbar is hidden: the tab brings it down, the X leaves fullscreen -->
+  <button id="toolbar-show" type="button" title="Show the toolbar" aria-label="Show the toolbar" hidden>
+    <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path d="M6 9l6 6 6-6" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+  </button>
+  <button id="fullscreen-exit" type="button" title="Leave fullscreen (Esc)" aria-label="Exit fullscreen" hidden>
+    <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/></svg>
   </button>
 
   <dialog id="evolver" aria-labelledby="evolver-title">

@@ -210,16 +210,66 @@ html, body {
   background: var(--bar-border);
 }
 
-/* Fullscreen sits at the far end of the first row */
-#fullscreen {
+/* Pin and Fullscreen sit at the far end of the first row */
+.toolbar-end {
+  display: inline-flex;
+  gap: 8px;
   margin-left: auto;
 }
 
-/* In fullscreen mode the toolbar is hidden and only the exit chevron shows */
-body.fullscreen #toolbar {
+#toolbar #pin {
+  min-width: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  padding: 0;
+}
+
+#toolbar #pin[hidden] {
   display: none;
 }
 
+/*
+ * The toolbar slides up out of sight unless it's pinned (or shown for the
+ * moment). Hidden, it can't be tabbed into either.
+ */
+#toolbar {
+  transition: transform 0.2s ease, visibility 0s;
+}
+
+body.toolbar-hidden #toolbar {
+  transform: translateY(calc(-100% - 20px - env(safe-area-inset-top)));
+  visibility: hidden;
+  transition: transform 0.2s ease, visibility 0s 0.2s;
+}
+
+/* A tab hanging from the top edge that brings the toolbar down */
+#toolbar-show {
+  position: fixed;
+  top: env(safe-area-inset-top);
+  left: 50%;
+  z-index: 20;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 64px;
+  height: 28px;
+  padding: 0;
+  transform: translateX(-50%);
+  color: var(--bar-text);
+  background: var(--bar-bg);
+  border: 1px solid var(--bar-border);
+  border-top: none;
+  border-radius: 0 0 10px 10px;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.15);
+  cursor: pointer;
+  opacity: 0.55;
+  touch-action: manipulation;
+  transition: opacity 0.15s;
+}
+
+/* Fullscreen only: an X in the corner to leave it */
 #fullscreen-exit {
   position: fixed;
   top: max(10px, env(safe-area-inset-top));
@@ -243,11 +293,14 @@ body.fullscreen #toolbar {
   transition: opacity 0.15s;
 }
 
+#toolbar-show:hover,
+#toolbar-show:focus-visible,
 #fullscreen-exit:hover,
 #fullscreen-exit:focus-visible {
   opacity: 1;
 }
 
+#toolbar-show[hidden],
 #fullscreen-exit[hidden] {
   display: none;
 }
