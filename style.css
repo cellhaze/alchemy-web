@@ -101,13 +101,50 @@ html, body {
   border-top: 1px solid var(--bar-border);
 }
 
-.row-label {
-  min-width: 52px;
+/*
+ * The Shapes and Effects labels fold their rows away: collapsed, only the
+ * label shows, and clicking it opens the row again. The arrow shows which.
+ */
+#toolbar .row-label {
+  min-width: 64px;
+  height: 28px;
+  margin-left: -4px;
+  padding: 0 4px;
+  text-align: left;
   font-size: 11px;
   font-weight: 600;
   letter-spacing: 0.04em;
   text-transform: uppercase;
+  color: var(--bar-text);
+  background: none;
+  border: none;
+  border-radius: 4px;
   opacity: 0.6;
+  transition: opacity 0.15s, background-color 0.15s;
+}
+
+#toolbar .row-label::before {
+  content: "\25BE";
+  display: inline-block;
+  width: 1.1em;
+}
+
+#toolbar .row-label[aria-expanded="false"]::before {
+  content: "\25B8";
+}
+
+#toolbar .row-label:hover,
+#toolbar .row-label:focus-visible {
+  opacity: 1;
+  background: var(--button-hover);
+}
+
+.toolbar-row.collapsed > :not(.row-label) {
+  display: none;
+}
+
+.toolbar-row.collapsed {
+  padding: 2px 0;
 }
 
 #toolbar button {

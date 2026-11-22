@@ -593,6 +593,24 @@
     if (panel.classList.contains('click')) exportButton.addEventListener('click', place);
   });
 
+  // Shapes and Effects rows fold away under their labels. The choice is
+  // remembered in this browser (if storage is available).
+  Array.prototype.forEach.call(document.querySelectorAll('#toolbar .row-label'), function (label) {
+    var row = label.parentNode;
+    var key = 'alchemy.collapsed.' + label.textContent.trim().toLowerCase();
+    function setOpen(open) {
+      row.classList.toggle('collapsed', !open);
+      label.setAttribute('aria-expanded', open ? 'true' : 'false');
+      try { localStorage.setItem(key, open ? '0' : '1'); } catch (e) {}
+    }
+    var collapsed = false;
+    try { collapsed = localStorage.getItem(key) === '1'; } catch (e) {}
+    setOpen(!collapsed);
+    label.addEventListener('click', function () {
+      setOpen(row.classList.contains('collapsed'));
+    });
+  });
+
   // Fullscreen: hide the toolbar and, where the browser allows it, take over
   // the whole screen. A chevron in the corner brings everything back, so
   // tablets without a keyboard can always get out.
