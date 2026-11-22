@@ -137,6 +137,36 @@ html, body {
   border-color: var(--button-active-bg);
 }
 
+/* A two-part switch (Line | Solid): both choices show, the active one is filled in */
+.segmented {
+  display: inline-flex;
+}
+
+#toolbar .segmented button {
+  min-width: 0;
+  border-radius: 0;
+}
+
+#toolbar .segmented button + button {
+  margin-left: -1px;
+}
+
+#toolbar .segmented button:first-child {
+  border-radius: 4px 0 0 4px;
+}
+
+#toolbar .segmented button:last-child {
+  border-radius: 0 4px 4px 0;
+}
+
+#toolbar .segmented button[aria-checked="true"] {
+  position: relative;
+  background: var(--button-active-bg);
+  color: var(--button-active-text);
+  border-color: var(--button-active-bg);
+  cursor: default;
+}
+
 .separator {
   width: 1px;
   align-self: stretch;

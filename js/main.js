@@ -306,18 +306,21 @@
     Alchemy.modules.pressure.amount = clampInput(pressureAmount);
   });
 
-  // Style: line (stroke) or solid (fill)
-  var styleButton = document.getElementById('style');
-  function showStyle() {
-    var solid = canvas.style === Alchemy.STYLE_FILL;
-    styleButton.textContent = solid ? 'Solid' : 'Line';
-    styleButton.setAttribute('aria-pressed', solid ? 'true' : 'false');
+  // Style: line (stroke) or solid (fill), a two-part switch showing both
+  var styleLine = document.getElementById('style-line');
+  var styleSolid = document.getElementById('style-solid');
+  function setStyle(style) {
+    canvas.style = style;
+    var solid = style === Alchemy.STYLE_FILL;
+    styleLine.setAttribute('aria-checked', solid ? 'false' : 'true');
+    styleSolid.setAttribute('aria-checked', solid ? 'true' : 'false');
   }
-  styleButton.addEventListener('click', function () {
-    canvas.style = canvas.style === Alchemy.STYLE_FILL ? Alchemy.STYLE_STROKE : Alchemy.STYLE_FILL;
-    showStyle();
-  });
-  showStyle();
+  function toggleStyle() {
+    setStyle(canvas.style === Alchemy.STYLE_FILL ? Alchemy.STYLE_STROKE : Alchemy.STYLE_FILL);
+  }
+  styleLine.addEventListener('click', function () { setStyle(Alchemy.STYLE_STROKE); });
+  styleSolid.addEventListener('click', function () { setStyle(Alchemy.STYLE_FILL); });
+  setStyle(canvas.style);
 
   // Colour
   var colorInput = document.getElementById('color');
@@ -681,7 +684,7 @@
     } else if ((e.key === 'f' || e.key === 'F') && !e.repeat) {
       toggleFullscreen();
     } else if (e.key === 's' || e.key === 'S') {
-      styleButton.click();
+      toggleStyle();
     } else if (e.key === 'Backspace' || e.key === 'Delete') {
       e.preventDefault();
       canvas.clear();

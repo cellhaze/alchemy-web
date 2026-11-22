@@ -25,7 +25,10 @@
   <div id="toolbar" role="toolbar" aria-label="Drawing tools">
     <div class="toolbar-row" role="group" aria-label="Brush and canvas">
       <div class="sub group" role="group" aria-label="Brush">
-        <button id="style" type="button" title="Line or solid style (S)">Line</button>
+        <div id="style" class="segmented" role="radiogroup" aria-label="Style">
+          <button id="style-line" type="button" role="radio" aria-checked="true" title="Line: draw outlines (S switches)">Line</button>
+          <button id="style-solid" type="button" role="radio" aria-checked="false" title="Solid: fill shapes in (S switches)">Solid</button>
+        </div>
         <label class="tool" title="Colour">
           <span class="visually-hidden">Colour</span>
           <input id="color" type="color">
@@ -40,6 +43,15 @@
           <input id="opacity" type="range" min="1" max="100" step="1" value="100">
           <output id="opacity-value">100%</output>
         </label>
+        <span class="has-options">
+          <button class="create-module" data-module="pressure" type="button" aria-pressed="false" title="Pressure: a stroke that swells and thins with pen pressure (best in Solid style)">Pressure</button>
+          <div id="pressure-options" class="sub popover" hidden>
+            <label class="tool" title="How wide full pen pressure makes the stroke, on each side">
+              <span>Pressure</span>
+              <input id="pressure-amount" type="number" min="1" max="200" step="1" value="25">
+            </label>
+          </div>
+        </span>
       </div>
 
       <span class="separator" aria-hidden="true"></span>
@@ -144,15 +156,6 @@
           </div>
         </span>
         <button class="create-module" data-module="median" type="button" aria-pressed="false" title="Median: each stroke also draws a line halfway to the previous stroke">Median</button>
-        <span class="has-options">
-          <button class="create-module" data-module="pressure" type="button" aria-pressed="false" title="Pressure: a stroke that swells and thins with pen pressure (best in Solid style)">Pressure</button>
-          <div id="pressure-options" class="sub popover" hidden>
-            <label class="tool" title="How wide full pen pressure makes the stroke, on each side">
-              <span>Pressure</span>
-              <input id="pressure-amount" type="number" min="1" max="200" step="1" value="25">
-            </label>
-          </div>
-        </span>
         <span class="has-options">
           <button class="create-module" data-module="ribbon" type="button" aria-pressed="false" title="Ribbon: flowing, twisting ribbons that sag with gravity">Ribbon</button>
           <div id="ribbon-options" class="sub popover" hidden>
